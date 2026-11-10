@@ -189,18 +189,17 @@ jobs:
           tag_name: ${{ steps.get_version.outputs.TAG }}
           name: "NusantaraCrown AR ${{ steps.get_version.outputs.TAG }}"
           body: |
-            ## NusantaraCrown AR Release ${{ steps.get_version.outputs.TAG }} 👑🇮🇩
-            
-            Aplikasi Augmented Reality (AR) interaktif mencoba 10 mahkota adat tradisional Indonesia secara langsung di atas kepala.
-            
-            ### 📦 File Unduhan:
-            - **Android APK (Fix ARCore Optional)**: `NusantaraCrown-AR-v0.0.1.apk`
-            - **iOS IPA**: `NusantaraCrown-AR-v0.0.1.ipa` (Install via TrollStore / AltStore / Sideloadly)
-            
-            ### ✨ Fitur Utama Versi 0.0.1:
-            - 10 Mahkota Tradisional lengkap dari 5 pulau besar (Sumatera, Jawa, Kalimantan, Sulawesi, Papua) untuk Pria & Wanita.
-            - Dual tracking: Native ARCore & ARKit Face Tracking.
-            - UI/UX Glassmorphism (Figma design token) dengan info budaya 3 poin & capture photo.
+            Aplikasi augmented reality untuk mencoba 10 mahkota adat tradisional Indonesia langsung di kepala lewat kamera.
+
+            ### Unduhan:
+            - Android APK: `NusantaraCrown-AR-${{ steps.get_version.outputs.TAG }}.apk`
+            - iOS IPA: `NusantaraCrown-AR-${{ steps.get_version.outputs.TAG }}.ipa`
+
+            ### Fitur:
+            - 10 mahkota tradisional pria dan wanita dari Sumatera, Jawa, Kalimantan, Sulawesi, dan Papua.
+            - Tracking wajah real-time dengan AR Foundation dan fallback neural face detection.
+            - Kartu filosofi budaya: makna simbolik, bahan tradisional, dan momen penggunaan tiap mahkota.
+            - Fitur tangkapan layar kamera langsung dari aplikasi.
           draft: false
           prerelease: false
           files: |
