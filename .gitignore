@@ -83,3 +83,7 @@ crashlytics-build.properties
 ehthumbs.db
 Thumbs.db
 .utmp/
+
+# Unity License files (never commit)
+*.alf
+*.ulf
