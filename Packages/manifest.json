@@ -8,7 +8,7 @@
     "com.unity.inputsystem": "1.20.1",
     "com.unity.render-pipelines.universal": "17.6.0",
     "com.unity.ugui": "2.6.0",
-    "com.unity.xr-content.xr-sim-environments": "file:../ContentPackages\\com.unity.xr-content.xr-sim-environments-2.1.1.tgz",
+    "com.unity.xr-content.xr-sim-environments": "file:../ContentPackages/com.unity.xr-content.xr-sim-environments-2.1.1.tgz",
     "com.unity.xr.arcore": "6.6.2",
     "com.unity.xr.arfoundation": "6.6.2",
     "com.unity.xr.arkit": "6.6.2",
