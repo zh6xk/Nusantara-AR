@@ -48,7 +48,6 @@ jobs:
           unityVersion: 6000.0.8f1
           buildName: NusantaraCrown-AR-v0.0.1
           buildsPath: build/Android
-          androidAppBundle: false
           androidExportType: 'androidPackage'
           androidKeystoreName: ''
 
