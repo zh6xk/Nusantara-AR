@@ -536,7 +536,7 @@ PlayerSettings:
   enableInternalProfiler: 0
   logObjCUncaughtExceptions: 1
   enableCrashReportAPI: 0
-  cameraUsageDescription: 
+  cameraUsageDescription: Aplikasi ini membutuhkan akses kamera untuk fitur Augmented Reality (AR) mencoba mahkota adat Nusantara secara langsung di wajah Anda. 
   locationUsageDescription: 
   microphoneUsageDescription: 
   bluetoothUsageDescription: 
