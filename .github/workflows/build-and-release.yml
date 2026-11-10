@@ -45,7 +45,7 @@ jobs:
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
         with:
           targetPlatform: Android
-          unityVersion: 6000.0.8f1
+          unityVersion: 6000.6.8f1
           buildName: NusantaraCrown-AR-v0.0.1
           buildsPath: build/Android
           androidExportType: 'androidPackage'
