@@ -26,14 +26,15 @@ sealed partial class ReadmeEditor : Editor
 
     static Readme SelectReadme()
     {
-        var ids = AssetDatabase.FindAssetGUIDs("Readme t:Readme");
+        var ids = AssetDatabase.FindAssets("Readme t:Readme");
         if (ids.Length != 1)
         {
             Debug.LogWarning("Couldn't find a readme");
             return null;
         }
 
-        var readmeObject = AssetDatabase.LoadAssetByGUID<Readme>(ids[0]);
+        var path = AssetDatabase.GUIDToAssetPath(ids[0]);
+        var readmeObject = AssetDatabase.LoadAssetAtPath<Readme>(path);
         Selection.activeObject = readmeObject;
         return readmeObject;
     }
