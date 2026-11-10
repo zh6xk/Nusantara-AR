@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   # =========================================================================
-  # 1. BUILD IOS (FAST LINUX CONTAINER -> XCODE PROJECT + IPA)
+  # 1. BUILD IOS ONLY (FAST LINUX CONTAINER -> XCODE PROJECT)
   # =========================================================================
   build-ios:
     name: Build iOS 🍏
@@ -57,69 +57,19 @@ jobs:
           retention-days: 14
 
   # =========================================================================
-  # 2. BUILD ANDROID APK (FAST - DOCKER PRE-INSTALLED)
-  # =========================================================================
-  build-android:
-    name: Build Android APK 🤖
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          lfs: true
-
-      - name: Cache Unity Library
-        uses: actions/cache@v4
-        with:
-          path: Library
-          key: Library-Android-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
-          restore-keys: |
-            Library-Android-
-
-      - name: Build Unity Android APK
-        uses: game-ci/unity-builder@v4
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-        with:
-          targetPlatform: Android
-          unityVersion: 6000.6.8f1
-          buildName: NusantaraCrown-AR-v0.0.1
-          buildsPath: build/Android
-          androidExportType: 'androidPackage'
-          androidKeystoreName: ''
-
-      - name: Upload Android Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: NusantaraCrown-AR-Android-v0.0.1
-          path: build/Android/**/*.apk
-          retention-days: 14
-
-  # =========================================================================
-  # 3. CREATE GITHUB RELEASE
+  # 2. CREATE GITHUB RELEASE
   # =========================================================================
   release:
     name: Publish Release v0.0.1 🚀
-    needs: [build-android, build-ios]
+    needs: [build-ios]
     runs-on: ubuntu-latest
-    if: always() && (needs.build-android.result == 'success' || needs.build-ios.result == 'success')
+    if: always() && needs.build-ios.result == 'success'
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Download Android Artifacts
-        uses: actions/download-artifact@v4
-        if: needs.build-android.result == 'success'
-        with:
-          name: NusantaraCrown-AR-Android-v0.0.1
-          path: release-assets/
-
       - name: Download iOS Xcode Artifacts
         uses: actions/download-artifact@v4
-        if: needs.build-ios.result == 'success'
         with:
           name: NusantaraCrown-AR-iOS-Xcode
           path: release-assets/iOS/
@@ -148,12 +98,11 @@ jobs:
             Aplikasi Augmented Reality (AR) interaktif mencoba 10 mahkota adat tradisional Indonesia secara langsung di atas kepala.
             
             ### 📦 File Unduhan:
-            - **Android APK**: `NusantaraCrown-AR-v0.0.1.apk`
             - **iOS Xcode Project**: Tersedia di Artifacts/Releases (Siap buka di Xcode / install via AltStore / Sideloadly)
             
             ### ✨ Fitur Utama Versi 0.0.1:
             - 10 Mahkota Tradisional lengkap dari 5 pulau besar (Sumatera, Jawa, Kalimantan, Sulawesi, Papua) untuk Pria & Wanita.
-            - Dual tracking: Native ARCore + Neural Face Detection webcam fallback.
+            - Dual tracking: Native ARKit Face Tracking.
             - UI/UX Glassmorphism (Figma design token) dengan info budaya 3 poin & capture photo.
           draft: false
           prerelease: false
