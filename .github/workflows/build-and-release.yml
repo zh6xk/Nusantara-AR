@@ -17,49 +17,7 @@ permissions:
 
 jobs:
   # =========================================================================
-  # 1. BUILD ANDROID APK
-  # =========================================================================
-  build-android:
-    name: Build Android APK 🤖
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          lfs: true
-
-      - name: Cache Unity Library
-        uses: actions/cache@v4
-        with:
-          path: Library
-          key: Library-Android-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
-          restore-keys: |
-            Library-Android-
-
-      - name: Build Unity Android APK
-        uses: game-ci/unity-builder@v4
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-        with:
-          targetPlatform: Android
-          unityVersion: 6000.0.8f1
-          buildName: NusantaraCrown-AR-v0.0.1
-          buildsPath: build/Android
-          androidExportType: 'androidPackage'
-          androidKeystoreName: ''
-
-      - name: Upload Android Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: NusantaraCrown-AR-Android-v0.0.1
-          path: build/Android/**/*.apk
-          retention-days: 14
-
-  # =========================================================================
-  # 2. BUILD IOS IPA
+  # 1. BUILD IOS IPA FIRST
   # =========================================================================
   build-ios:
     name: Build iOS IPA 🍏
@@ -114,6 +72,48 @@ jobs:
         with:
           name: NusantaraCrown-AR-iOS-v0.0.1
           path: build/iOS-Package/*
+          retention-days: 14
+
+  # =========================================================================
+  # 2. BUILD ANDROID APK
+  # =========================================================================
+  build-android:
+    name: Build Android APK 🤖
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Cache Unity Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-Android-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-Android-
+
+      - name: Build Unity Android APK
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        with:
+          targetPlatform: Android
+          unityVersion: 6000.0.8f1
+          buildName: NusantaraCrown-AR-v0.0.1
+          buildsPath: build/Android
+          androidExportType: 'androidPackage'
+          androidKeystoreName: ''
+
+      - name: Upload Android Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NusantaraCrown-AR-Android-v0.0.1
+          path: build/Android/**/*.apk
           retention-days: 14
 
   # =========================================================================
