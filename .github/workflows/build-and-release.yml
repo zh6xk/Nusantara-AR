@@ -17,10 +17,10 @@ permissions:
 
 jobs:
   # =========================================================================
-  # 1. BUILD IOS ONLY (FAST LINUX CONTAINER -> XCODE PROJECT)
+  # 1. BUILD IOS (LINUX EXPORT XCODE -> MACOS COMPILE IPA)
   # =========================================================================
   build-ios:
-    name: Build iOS 🍏
+    name: Build iOS Xcode 🍏
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -54,6 +54,47 @@ jobs:
         with:
           name: NusantaraCrown-AR-iOS-Xcode
           path: build/iOS/iOS
+          retention-days: 7
+
+  compile-ipa:
+    name: Compile iOS .ipa 📦
+    needs: [build-ios]
+    runs-on: macos-latest
+    steps:
+      - name: Download iOS Xcode Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: NusantaraCrown-AR-iOS-Xcode
+          path: xcode-project
+
+      - name: Build unsigned .app via xcodebuild
+        run: |
+          cd xcode-project/NusantaraCrown-AR-iOS
+          xcodebuild build \
+            -project Unity-iPhone.xcodeproj \
+            -scheme Unity-iPhone \
+            -sdk iphoneos \
+            -configuration Release \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            -derivedDataPath build_output
+
+      - name: Package .ipa
+        run: |
+          mkdir -p Payload
+          APP_PATH=$(find xcode-project/NusantaraCrown-AR-iOS/build_output -name "*.app" -type d | head -n 1)
+          echo "Found app at: $APP_PATH"
+          cp -R "$APP_PATH" Payload/
+          zip -r NusantaraCrown-AR-v0.0.1.ipa Payload
+          mkdir -p ipa-output
+          mv NusantaraCrown-AR-v0.0.1.ipa ipa-output/
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NusantaraCrown-AR-iOS-IPA
+          path: ipa-output/*.ipa
           retention-days: 14
 
   # =========================================================================
@@ -103,9 +144,9 @@ jobs:
   # =========================================================================
   release:
     name: Publish Release v0.0.1 🚀
-    needs: [build-ios, build-android]
+    needs: [build-android, compile-ipa]
     runs-on: ubuntu-latest
-    if: always() && (needs.build-ios.result == 'success' || needs.build-android.result == 'success')
+    if: always() && (needs.build-android.result == 'success' || needs.compile-ipa.result == 'success')
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -117,12 +158,12 @@ jobs:
           name: NusantaraCrown-AR-Android-v0.0.1
           path: release-assets/
 
-      - name: Download iOS Xcode Artifacts
+      - name: Download iOS IPA Artifacts
         uses: actions/download-artifact@v4
-        if: needs.build-ios.result == 'success'
+        if: needs.compile-ipa.result == 'success'
         with:
-          name: NusantaraCrown-AR-iOS-Xcode
-          path: release-assets/iOS/
+          name: NusantaraCrown-AR-iOS-IPA
+          path: release-assets/
 
       - name: Determine Version Tag
         id: get_version
@@ -149,11 +190,11 @@ jobs:
             
             ### 📦 File Unduhan:
             - **Android APK (Fix ARCore Optional)**: `NusantaraCrown-AR-v0.0.1.apk`
-            - **iOS Xcode Project**: Tersedia di Artifacts/Releases (Siap buka di Xcode / install via AltStore / Sideloadly)
+            - **iOS IPA**: `NusantaraCrown-AR-v0.0.1.ipa` (Install via TrollStore / AltStore / Sideloadly)
             
             ### ✨ Fitur Utama Versi 0.0.1:
             - 10 Mahkota Tradisional lengkap dari 5 pulau besar (Sumatera, Jawa, Kalimantan, Sulawesi, Papua) untuk Pria & Wanita.
-            - Dual tracking: Native ARKit Face Tracking.
+            - Dual tracking: Native ARCore & ARKit Face Tracking.
             - UI/UX Glassmorphism (Figma design token) dengan info budaya 3 poin & capture photo.
           draft: false
           prerelease: false
