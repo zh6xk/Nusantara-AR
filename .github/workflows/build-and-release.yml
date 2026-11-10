@@ -79,6 +79,7 @@ jobs:
   # =========================================================================
   build-android:
     name: Build Android APK 🤖
+    needs: build-ios
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
