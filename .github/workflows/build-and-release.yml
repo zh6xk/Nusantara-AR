@@ -67,6 +67,11 @@ jobs:
           name: NusantaraCrown-AR-iOS-Xcode
           path: xcode-project
 
+      - name: Fix file permissions
+        run: |
+          chmod -R +x xcode-project/NusantaraCrown-AR-iOS/*.sh
+          find xcode-project/NusantaraCrown-AR-iOS -type f -name "usymtool*" -exec chmod +x {} \;
+
       - name: Build unsigned .app via xcodebuild
         run: |
           cd xcode-project/NusantaraCrown-AR-iOS
