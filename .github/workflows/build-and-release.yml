@@ -203,4 +203,6 @@ jobs:
             - UI/UX Glassmorphism (Figma design token) dengan info budaya 3 poin & capture photo.
           draft: false
           prerelease: false
-          files: release-assets/**/*
+          files: |
+            release-assets/**/*.apk
+            release-assets/**/*.ipa
