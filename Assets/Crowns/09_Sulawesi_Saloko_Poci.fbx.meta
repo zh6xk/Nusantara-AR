@@ -1,0 +1,381 @@
+fileFormatVersion: 2
+guid: 6fa1f5d3c27184b47bf91fafe67efe9a
+ModelImporter:
+  serializedVersion: 24600
+  internalIDToNameTable: []
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: JavaBridal_24k_AntiqueGold_Filigree
+    second: {fileID: 2100000, guid: efae85fe194265e4b8bbc3afba85a5df, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: JavaBridal_24k_BrightGold
+    second: {fileID: 2100000, guid: 59ba3454a61401747bc78becea11ef7b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: JavaBridal_24k_BurnishedGold
+    second: {fileID: 2100000, guid: 6285c5ebd378cdd4cbaf9f59872a1a19, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: JavaBridal_Chignon_GoldLatticeNet
+    second: {fileID: 2100000, guid: 68528868b63fa73428480817cb3af254, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: JavaBridal_Diamond_Inlay
+    second: {fileID: 2100000, guid: 08da4209ecae707439cdada5e327335d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: JavaBridal_Emerald_Inlay
+    second: {fileID: 2100000, guid: bdc91a1901c940940bf4835b7582f3eb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Kuluk_BlackVelvet_GoldFiligree
+    second: {fileID: 2100000, guid: 2678461980c2ff14fb39b056ade82aab, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Kuluk_Inner_Velvet_Lining
+    second: {fileID: 2100000, guid: c184eb4279ae2b54da4f5ac593957fdb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: LavungManik_Black_GlassBead
+    second: {fileID: 2100000, guid: 4a5222059c57301419bf2145e917e9b5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: LavungManik_Brass_Bell
+    second: {fileID: 2100000, guid: 3361306b6de320242844c3b218f79d69, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: LavungManik_GlassSeedBeads_PBR
+    second: {fileID: 2100000, guid: cb4bac71df361084ab9d193385f6d640, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: LavungManik_Rattan_Tie
+    second: {fileID: 2100000, guid: 2aea7c9361bb6274597d1da8eb9720d9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: LavungManik_Red_GlassBead
+    second: {fileID: 2100000, guid: 8b61d6a8a9517c24e9bfadaead478730, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: LavungManik_White_GlassBead
+    second: {fileID: 2100000, guid: b80c9c662ce45704395cb3580c1a96bb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: LavungManik_Yellow_GlassBead
+    second: {fileID: 2100000, guid: 8665b7e1f0308c6479e99f2e5bf0b64d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Lavung_Braided_Fiber_Tassel
+    second: {fileID: 2100000, guid: 1a7badeefe6fbe74a9d8a098aa9099d7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Lavung_Carved_Ivory_Skull
+    second: {fileID: 2100000, guid: 7bf08304eb06b1e4baaa96f018e43304, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Lavung_Hornbill_Casque_Red
+    second: {fileID: 2100000, guid: 12d0718762979da4e96fb6583249f805, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Lavung_Hornbill_Feather
+    second: {fileID: 2100000, guid: 6e2462498cc012f4ea9f48ae42381b7c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Lavung_Laced_Bark_Cord
+    second: {fileID: 2100000, guid: 5705f6a0599e5c74788db46830080e34, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Lavung_Woven_Rattan_RedYellow
+    second: {fileID: 2100000, guid: 24c9d5f5a002cb247baf36fa1855eceb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Minang_Ornate_Gold_Pin
+    second: {fileID: 2100000, guid: 508d8dfa069bae34da7cc30ee211238e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Minang_Pin_BurnishedGold
+    second: {fileID: 2100000, guid: aeb3f5b80ee208a4b96bcbfeee84c121, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Minang_Songket_InnerLining
+    second: {fileID: 2100000, guid: 0b93ef1eca969e448982d423c4d495d6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Minang_Songket_MaroonGold
+    second: {fileID: 2100000, guid: d87a414d11279f34b8709a109fa0c587, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: PapuanFemale_Black_Cassowary_Feather_PBR
+    second: {fileID: 2100000, guid: c61b67b93003d654b9e53666096f6d64, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: PapuanFemale_Braided_Bark_Cord_PBR
+    second: {fileID: 2100000, guid: e065f4666908741469c9c5a3ca28fb63, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: PapuanFemale_Inner_Bark_Lining_PBR
+    second: {fileID: 2100000, guid: e6e35f68b15e5c64294b72dfe68d3cdc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: PapuanFemale_White_Cowrie_Shell_PBR
+    second: {fileID: 2100000, guid: cd3000ff00ab0274d8091783b58db573, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: PapuanFemale_Woven_Bark_PBR
+    second: {fileID: 2100000, guid: 459b1bb08cb1bba44a5ee6baafb0e2fd, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Papuan_BirdOfParadise_GoldPlume
+    second: {fileID: 2100000, guid: b107e7e9c2f997e47aeb7b429e4b1a82, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Papuan_Black_Cassowary_Feather
+    second: {fileID: 2100000, guid: 9c8fa63ffed7bac41b40ca4ad0489d4a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Papuan_BoP_Emerald_Breast
+    second: {fileID: 2100000, guid: 17c00574e11c25645b57f1e61fbe3bf2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Papuan_Cowrie_Aperture_Dark
+    second: {fileID: 2100000, guid: 9d39b8042c450604f9723436af705bd2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Papuan_Rattan_Lattice_Cane
+    second: {fileID: 2100000, guid: 4ce4321fd96700c418cc7e4b01e55128, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Papuan_Twisted_Bark_String
+    second: {fileID: 2100000, guid: afd1feb13da9db24ca58cc7b7e3558d2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Papuan_White_Cowrie_Shell
+    second: {fileID: 2100000, guid: 8f6a9c5d31b60eb4ab2c16973375628e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Papuan_WovenBark_TerracottaOchre
+    second: {fileID: 2100000, guid: 75250d004db7b8b4b9ac2b6bbf1a33f6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Passapu_Antique_Gold_Recess
+    second: {fileID: 2100000, guid: 689c970f96e6ce54ca93a0af08759bf3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Passapu_Inner_MaroonLining
+    second: {fileID: 2100000, guid: 32fd1b2baec1e3a45bc36aae2e27a2e3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Passapu_Maroon_GoldEmbroidery
+    second: {fileID: 2100000, guid: cefe7f71242621648afb420b2aa277ef, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Passapu_Royal_Gold_Badge
+    second: {fileID: 2100000, guid: 0b4e2f259a46cd445af2029c6ab14918, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Royal_24k_Gold
+    second: {fileID: 2100000, guid: aab1bac423f3d0d4e80115f4fb3a9911, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Royal_24k_Gold_Deep
+    second: {fileID: 2100000, guid: c8385337716f8f34ab32ae0846dc714e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Saloko_24k_Deep_Gold
+    second: {fileID: 2100000, guid: 79eeb0837a7062244a9de1d12e4f4758, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Saloko_24k_Polished_YellowGold
+    second: {fileID: 2100000, guid: 6a62608a7b7b7104bb1c5e05cd46b2c3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Saloko_24k_YellowGold_Filigree.001
+    second: {fileID: 2100000, guid: fa532e9dad7998b4dac37e085799c114, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Saloko_Chignon_GoldenMeshNet
+    second: {fileID: 2100000, guid: e090978ec356b204bbeb6b77f11f750e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Saloko_White_Pearl_Tip
+    second: {fileID: 2100000, guid: dc673d99d876bc7479d6c567520db991, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Suntiang_24k_Gold_Filigree
+    second: {fileID: 2100000, guid: ed07bbee03ece384fbd0b00cead3576c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Suntiang_24k_Polished_Gold
+    second: {fileID: 2100000, guid: c2cee47c30ba27e4588d74e73151a635, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Suntiang_Antique_Gold_Recess
+    second: {fileID: 2100000, guid: 55aaf214c56b7264eb3a4535b95fea55, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Suntiang_Ruby_Gem
+    second: {fileID: 2100000, guid: 26ea5d54922ff124487aeb528352273d, type: 2}
+  materials:
+    materialImportMode: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+    searchTexturesGlobally: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    preBakeConvexCollisionMesh: 0
+    preBakeTriangleCollisionMesh: 0
+    importPhysicalCameras: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
+    importUVs: -1
+    importVertexColors: 1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+    calculateBlendshapeNormalsDeltaFromImportedNormals: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 0
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

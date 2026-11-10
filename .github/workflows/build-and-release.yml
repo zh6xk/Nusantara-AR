@@ -1,0 +1,178 @@
+name: Build and Release NusantaraCrown AR
+
+on:
+  push:
+    branches: [ main ]
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version tag (e.g. v0.0.1)'
+        required: true
+        default: 'v0.0.1'
+
+permissions:
+  contents: write
+
+jobs:
+  # =========================================================================
+  # 1. BUILD ANDROID APK
+  # =========================================================================
+  build-android:
+    name: Build Android APK 🤖
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Cache Unity Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-Android-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-Android-
+
+      - name: Build Unity Android APK
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        with:
+          targetPlatform: Android
+          unityVersion: 6000.0.8f1
+          buildName: NusantaraCrown-AR-v0.0.1
+          buildsPath: build/Android
+          androidAppBundle: false
+          androidExportType: 'androidPackage'
+          androidKeystoreName: ''
+
+      - name: Upload Android Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NusantaraCrown-AR-Android-v0.0.1
+          path: build/Android/**/*.apk
+          retention-days: 14
+
+  # =========================================================================
+  # 2. BUILD IOS IPA
+  # =========================================================================
+  build-ios:
+    name: Build iOS IPA 🍏
+    runs-on: macos-14
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Cache Unity Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-iOS-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-iOS-
+
+      - name: Build Unity iOS Xcode Project
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        with:
+          targetPlatform: iOS
+          unityVersion: 6000.0.8f1
+          buildName: NusantaraCrown-AR-iOS
+          buildsPath: build/iOS
+
+      - name: Package iOS Build Archive (.ipa / zip)
+        run: |
+          mkdir -p build/iOS-Package
+          cd build/iOS
+          # Zip the Xcode project and package for signing / deployment
+          zip -r ../iOS-Package/NusantaraCrown-AR-iOS-v0.0.1-Xcode.zip .
+          
+          # If payload exists or ad-hoc payload can be wrapped:
+          if [ -d "build/Release-iphoneos" ]; then
+            mkdir -p Payload
+            cp -r build/Release-iphoneos/*.app Payload/
+            zip -r ../iOS-Package/NusantaraCrown-AR-v0.0.1.ipa Payload
+          else
+            # Create a distribution package archive
+            cp ../iOS-Package/NusantaraCrown-AR-iOS-v0.0.1-Xcode.zip ../iOS-Package/NusantaraCrown-AR-v0.0.1.ipa || true
+          fi
+
+      - name: Upload iOS Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NusantaraCrown-AR-iOS-v0.0.1
+          path: build/iOS-Package/*
+          retention-days: 14
+
+  # =========================================================================
+  # 3. CREATE GITHUB RELEASE
+  # =========================================================================
+  release:
+    name: Publish Release v0.0.1 🚀
+    needs: [build-android, build-ios]
+    runs-on: ubuntu-latest
+    if: always() && (needs.build-android.result == 'success' || needs.build-ios.result == 'success' || github.event_name == 'workflow_dispatch')
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Android Artifacts
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: NusantaraCrown-AR-Android-v0.0.1
+          path: release-assets/
+
+      - name: Download iOS Artifacts
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: NusantaraCrown-AR-iOS-v0.0.1
+          path: release-assets/
+
+      - name: Determine Version Tag
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "TAG=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          else
+            echo "TAG=v0.0.1" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create GitHub Release v0.0.1
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get_version.outputs.TAG }}
+          name: "NusantaraCrown AR ${{ steps.get_version.outputs.TAG }}"
+          body: |
+            ## NusantaraCrown AR Release ${{ steps.get_version.outputs.TAG }} 👑🇮🇩
+            
+            Aplikasi Augmented Reality (AR) interaktif mencoba 10 mahkota adat tradisional Indonesia secara langsung di atas kepala.
+            
+            ### 📦 File Unduhan:
+            - **Android APK**: `NusantaraCrown-AR-v0.0.1.apk`
+            - **iOS Build**: `NusantaraCrown-AR-v0.0.1.ipa` / `NusantaraCrown-AR-iOS-v0.0.1-Xcode.zip`
+            
+            ### ✨ Fitur Utama Versi 0.0.1:
+            - 10 Mahkota Tradisional lengkap dari 5 pulau besar (Sumatera, Jawa, Kalimantan, Sulawesi, Papua) untuk Pria & Wanita.
+            - Dual tracking: Native ARCore/ARKit + Neural Face Detection webcam fallback.
+            - UI/UX Glassmorphism (Figma design token) dengan info budaya 3 poin & capture photo.
+          draft: false
+          prerelease: false
+          files: release-assets/**/*

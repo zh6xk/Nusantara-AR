@@ -1,0 +1,1168 @@
+{
+  "JavaBridal_24k_AntiqueGold_Filigree": {
+    "diffuse": [
+      0.92,
+      0.7,
+      0.18,
+      1.0
+    ],
+    "base_color": [
+      0.8,
+      0.8,
+      0.8,
+      1.0
+    ],
+    "metallic": 0.99,
+    "roughness": 0.5,
+    "base_map": "JavaBridal_Gold_BaseColor",
+    "metallic_map": null,
+    "roughness_map": "JavaBridal_Gold_Roughness",
+    "normal_map": "JavaBridal_Gold_Normal",
+    "normal_strength": 1.4,
+    "metallic_smoothness_map": "JavaBridal_24k_AntiqueGold_Filigree_MetallicSmoothness"
+  },
+  "JavaBridal_24k_BrightGold": {
+    "diffuse": [
+      0.98,
+      0.78,
+      0.22,
+      1.0
+    ],
+    "base_color": [
+      0.98,
+      0.78,
+      0.22,
+      1.0
+    ],
+    "metallic": 0.99,
+    "roughness": 0.15,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "JavaBridal_24k_BurnishedGold": {
+    "diffuse": [
+      0.72,
+      0.48,
+      0.11,
+      1.0
+    ],
+    "base_color": [
+      0.72,
+      0.48,
+      0.11,
+      1.0
+    ],
+    "metallic": 0.98,
+    "roughness": 0.28,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "JavaBridal_Chignon_GoldLatticeNet": {
+    "diffuse": [
+      0.12,
+      0.1,
+      0.08,
+      1.0
+    ],
+    "base_color": [
+      0.8,
+      0.8,
+      0.8,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.5,
+    "base_map": "JavaBridal_BunNet_BaseColor",
+    "metallic_map": "JavaBridal_BunNet_Metallic",
+    "roughness_map": "JavaBridal_BunNet_Roughness",
+    "normal_map": "JavaBridal_BunNet_Normal",
+    "normal_strength": 1.4,
+    "metallic_smoothness_map": "JavaBridal_Chignon_GoldLatticeNet_MetallicSmoothness"
+  },
+  "JavaBridal_Diamond_Inlay": {
+    "diffuse": [
+      0.96,
+      0.98,
+      1.0,
+      1.0
+    ],
+    "base_color": [
+      0.96,
+      0.98,
+      1.0,
+      1.0
+    ],
+    "metallic": 0.35,
+    "roughness": 0.02,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "JavaBridal_Emerald_Inlay": {
+    "diffuse": [
+      0.02,
+      0.56,
+      0.22,
+      1.0
+    ],
+    "base_color": [
+      0.02,
+      0.56,
+      0.22,
+      1.0
+    ],
+    "metallic": 0.2,
+    "roughness": 0.06,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "Kuluk_BlackVelvet_GoldFiligree": {
+    "diffuse": [
+      0.04,
+      0.04,
+      0.05,
+      1.0
+    ],
+    "base_color": [
+      0.8,
+      0.8,
+      0.8,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.5,
+    "base_map": "Kuluk_BaseColor",
+    "metallic_map": "Kuluk_Metallic",
+    "roughness_map": "Kuluk_Roughness",
+    "normal_map": "Kuluk_Normal",
+    "normal_strength": 1.45,
+    "metallic_smoothness_map": "Kuluk_BlackVelvet_GoldFiligree_MetallicSmoothness"
+  },
+  "Kuluk_Inner_Velvet_Lining": {
+    "diffuse": [
+      0.03,
+      0.03,
+      0.04,
+      1.0
+    ],
+    "base_color": [
+      0.025,
+      0.022,
+      0.028,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.9,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "LavungManik_Black_GlassBead": {
+    "diffuse": [
+      0.04,
+      0.04,
+      0.05,
+      1.0
+    ],
+    "base_color": [
+      0.04,
+      0.04,
+      0.05,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.12,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "LavungManik_Brass_Bell": {
+    "diffuse": [
+      0.92,
+      0.7,
+      0.2,
+      1.0
+    ],
+    "base_color": [
+      0.92,
+      0.7,
+      0.2,
+      1.0
+    ],
+    "metallic": 0.95,
+    "roughness": 0.22,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "LavungManik_GlassSeedBeads_PBR": {
+    "diffuse": [
+      0.78,
+      0.15,
+      0.12,
+      1.0
+    ],
+    "base_color": [
+      0.8,
+      0.8,
+      0.8,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.5,
+    "base_map": "LavungManik_Beads_BaseColor",
+    "metallic_map": null,
+    "roughness_map": "LavungManik_Beads_Roughness",
+    "normal_map": "LavungManik_Beads_Normal",
+    "normal_strength": 1.45,
+    "metallic_smoothness_map": "LavungManik_GlassSeedBeads_PBR_MetallicSmoothness"
+  },
+  "LavungManik_Rattan_Tie": {
+    "diffuse": [
+      0.64,
+      0.42,
+      0.18,
+      1.0
+    ],
+    "base_color": [
+      0.64,
+      0.42,
+      0.18,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.48,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "LavungManik_Red_GlassBead": {
+    "diffuse": [
+      0.82,
+      0.06,
+      0.05,
+      1.0
+    ],
+    "base_color": [
+      0.82,
+      0.06,
+      0.05,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.12,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "LavungManik_White_GlassBead": {
+    "diffuse": [
+      0.96,
+      0.94,
+      0.88,
+      1.0
+    ],
+    "base_color": [
+      0.96,
+      0.94,
+      0.88,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.12,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "LavungManik_Yellow_GlassBead": {
+    "diffuse": [
+      0.98,
+      0.76,
+      0.08,
+      1.0
+    ],
+    "base_color": [
+      0.98,
+      0.76,
+      0.08,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.12,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "Lavung_Braided_Fiber_Tassel": {
+    "diffuse": [
+      0.68,
+      0.5,
+      0.28,
+      1.0
+    ],
+    "base_color": [
+      0.68,
+      0.5,
+      0.28,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.82,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "Lavung_Carved_Ivory_Skull": {
+    "diffuse": [
+      0.91,
+      0.84,
+      0.68,
+      1.0
+    ],
+    "base_color": [
+      0.8,
+      0.8,
+      0.8,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.28,
+    "base_map": "Lavung_Ivory_BaseColor",
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": "Lavung_Ivory_Normal",
+    "normal_strength": 1.2,
+    "metallic_smoothness_map": null
+  },
+  "Lavung_Hornbill_Casque_Red": {
+    "diffuse": [
+      0.72,
+      0.16,
+      0.08,
+      1.0
+    ],
+    "base_color": [
+      0.58,
+      0.11,
+      0.04,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.24,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "Lavung_Hornbill_Feather": {
+    "diffuse": [
+      0.92,
+      0.9,
+      0.86,
+      1.0
+    ],
+    "base_color": [
+      0.8,
+      0.8,
+      0.8,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.48,
+    "base_map": "Lavung_Feather_BaseColor",
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": "Lavung_Feather_Normal",
+    "normal_strength": 1.1,
+    "metallic_smoothness_map": null
+  },
+  "Lavung_Laced_Bark_Cord": {
+    "diffuse": [
+      0.28,
+      0.16,
+      0.09,
+      1.0
+    ],
+    "base_color": [
+      0.28,
+      0.16,
+      0.09,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.78,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "Lavung_Woven_Rattan_RedYellow": {
+    "diffuse": [
+      0.75,
+      0.38,
+      0.12,
+      1.0
+    ],
+    "base_color": [
+      0.8,
+      0.8,
+      0.8,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.5,
+    "base_map": "Lavung_Rattan_BaseColor",
+    "metallic_map": null,
+    "roughness_map": "Lavung_Rattan_Roughness",
+    "normal_map": "Lavung_Rattan_Normal",
+    "normal_strength": 1.4,
+    "metallic_smoothness_map": "Lavung_Woven_Rattan_RedYellow_MetallicSmoothness"
+  },
+  "Minang_Ornate_Gold_Pin": {
+    "diffuse": [
+      0.94,
+      0.73,
+      0.24,
+      1.0
+    ],
+    "base_color": [
+      0.94,
+      0.73,
+      0.24,
+      1.0
+    ],
+    "metallic": 0.96,
+    "roughness": 0.19,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "Minang_Pin_BurnishedGold": {
+    "diffuse": [
+      0.85,
+      0.58,
+      0.14,
+      1.0
+    ],
+    "base_color": [
+      0.85,
+      0.58,
+      0.14,
+      1.0
+    ],
+    "metallic": 0.96,
+    "roughness": 0.24,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "Minang_Songket_InnerLining": {
+    "diffuse": [
+      0.25,
+      0.04,
+      0.06,
+      1.0
+    ],
+    "base_color": [
+      0.25,
+      0.04,
+      0.06,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.55,
+    "base_map": "Songket_BaseColor",
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": "Songket_Normal",
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "Minang_Songket_MaroonGold": {
+    "diffuse": [
+      0.45,
+      0.06,
+      0.1,
+      1.0
+    ],
+    "base_color": [
+      0.8,
+      0.8,
+      0.8,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.5,
+    "base_map": "Songket_BaseColor",
+    "metallic_map": "Songket_Metallic",
+    "roughness_map": "Songket_Roughness",
+    "normal_map": "Songket_Normal",
+    "normal_strength": 1.35,
+    "metallic_smoothness_map": "Minang_Songket_MaroonGold_MetallicSmoothness"
+  },
+  "PapuanFemale_Black_Cassowary_Feather_PBR": {
+    "diffuse": [
+      0.04,
+      0.04,
+      0.05,
+      1.0
+    ],
+    "base_color": [
+      0.8,
+      0.8,
+      0.8,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.5,
+    "base_map": "PapuanFemale_Feather_BaseColor",
+    "metallic_map": null,
+    "roughness_map": "PapuanFemale_Feather_Roughness",
+    "normal_map": "PapuanFemale_Feather_Normal",
+    "normal_strength": 1.3,
+    "metallic_smoothness_map": "PapuanFemale_Black_Cassowary_Feather_PBR_MetallicSmoothness"
+  },
+  "PapuanFemale_Braided_Bark_Cord_PBR": {
+    "diffuse": [
+      0.44,
+      0.28,
+      0.15,
+      1.0
+    ],
+    "base_color": [
+      0.44,
+      0.28,
+      0.15,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.78,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "PapuanFemale_Inner_Bark_Lining_PBR": {
+    "diffuse": [
+      0.26,
+      0.16,
+      0.08,
+      1.0
+    ],
+    "base_color": [
+      0.26,
+      0.16,
+      0.08,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.85,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "PapuanFemale_White_Cowrie_Shell_PBR": {
+    "diffuse": [
+      0.94,
+      0.91,
+      0.83,
+      1.0
+    ],
+    "base_color": [
+      0.8,
+      0.8,
+      0.8,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.5,
+    "base_map": "PapuanFemale_Cowrie_BaseColor",
+    "metallic_map": null,
+    "roughness_map": "PapuanFemale_Cowrie_Roughness",
+    "normal_map": "PapuanFemale_Cowrie_Normal",
+    "normal_strength": 1.25,
+    "metallic_smoothness_map": "PapuanFemale_White_Cowrie_Shell_PBR_MetallicSmoothness"
+  },
+  "PapuanFemale_Woven_Bark_PBR": {
+    "diffuse": [
+      0.36,
+      0.22,
+      0.11,
+      1.0
+    ],
+    "base_color": [
+      0.8,
+      0.8,
+      0.8,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.5,
+    "base_map": "PapuanFemale_Bark_BaseColor",
+    "metallic_map": null,
+    "roughness_map": "PapuanFemale_Bark_Roughness",
+    "normal_map": "PapuanFemale_Bark_Normal",
+    "normal_strength": 1.55,
+    "metallic_smoothness_map": "PapuanFemale_Woven_Bark_PBR_MetallicSmoothness"
+  },
+  "Papuan_BirdOfParadise_GoldPlume": {
+    "diffuse": [
+      0.98,
+      0.78,
+      0.15,
+      1.0
+    ],
+    "base_color": [
+      0.8,
+      0.8,
+      0.8,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.32,
+    "base_map": "Papuan_BoP_BaseColor",
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": "Papuan_BoP_Normal",
+    "normal_strength": 1.1,
+    "metallic_smoothness_map": null
+  },
+  "Papuan_Black_Cassowary_Feather": {
+    "diffuse": [
+      0.03,
+      0.03,
+      0.03,
+      1.0
+    ],
+    "base_color": [
+      0.022,
+      0.02,
+      0.018,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.42,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": "Papuan_BoP_Normal",
+    "normal_strength": 1.4,
+    "metallic_smoothness_map": null
+  },
+  "Papuan_BoP_Emerald_Breast": {
+    "diffuse": [
+      0.02,
+      0.48,
+      0.22,
+      1.0
+    ],
+    "base_color": [
+      0.02,
+      0.48,
+      0.22,
+      1.0
+    ],
+    "metallic": 0.65,
+    "roughness": 0.22,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "Papuan_Cowrie_Aperture_Dark": {
+    "diffuse": [
+      0.18,
+      0.11,
+      0.07,
+      1.0
+    ],
+    "base_color": [
+      0.18,
+      0.11,
+      0.07,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.55,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "Papuan_Rattan_Lattice_Cane": {
+    "diffuse": [
+      0.66,
+      0.44,
+      0.2,
+      1.0
+    ],
+    "base_color": [
+      0.66,
+      0.44,
+      0.2,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.46,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "Papuan_Twisted_Bark_String": {
+    "diffuse": [
+      0.38,
+      0.24,
+      0.13,
+      1.0
+    ],
+    "base_color": [
+      0.38,
+      0.24,
+      0.13,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.82,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "Papuan_White_Cowrie_Shell": {
+    "diffuse": [
+      0.95,
+      0.91,
+      0.82,
+      1.0
+    ],
+    "base_color": [
+      0.95,
+      0.91,
+      0.82,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.18,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "Papuan_WovenBark_TerracottaOchre": {
+    "diffuse": [
+      0.65,
+      0.25,
+      0.12,
+      1.0
+    ],
+    "base_color": [
+      0.8,
+      0.8,
+      0.8,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.5,
+    "base_map": "Papuan_Bark_BaseColor",
+    "metallic_map": null,
+    "roughness_map": "Papuan_Bark_Roughness",
+    "normal_map": "Papuan_Bark_Normal",
+    "normal_strength": 1.4,
+    "metallic_smoothness_map": "Papuan_WovenBark_TerracottaOchre_MetallicSmoothness"
+  },
+  "Passapu_Antique_Gold_Recess": {
+    "diffuse": [
+      0.76,
+      0.52,
+      0.12,
+      1.0
+    ],
+    "base_color": [
+      0.76,
+      0.52,
+      0.12,
+      1.0
+    ],
+    "metallic": 0.98,
+    "roughness": 0.26,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "Passapu_Inner_MaroonLining": {
+    "diffuse": [
+      0.2,
+      0.02,
+      0.04,
+      1.0
+    ],
+    "base_color": [
+      0.16,
+      0.012,
+      0.025,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.65,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "Passapu_Maroon_GoldEmbroidery": {
+    "diffuse": [
+      0.42,
+      0.04,
+      0.08,
+      1.0
+    ],
+    "base_color": [
+      0.8,
+      0.8,
+      0.8,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.5,
+    "base_map": "Passapu_BaseColor",
+    "metallic_map": "Passapu_Metallic",
+    "roughness_map": "Passapu_Roughness",
+    "normal_map": "Passapu_Normal",
+    "normal_strength": 1.4,
+    "metallic_smoothness_map": "Passapu_Maroon_GoldEmbroidery_MetallicSmoothness"
+  },
+  "Passapu_Royal_Gold_Badge": {
+    "diffuse": [
+      0.98,
+      0.78,
+      0.22,
+      1.0
+    ],
+    "base_color": [
+      0.98,
+      0.78,
+      0.22,
+      1.0
+    ],
+    "metallic": 0.98,
+    "roughness": 0.16,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "Royal_24k_Gold": {
+    "diffuse": [
+      0.98,
+      0.78,
+      0.22,
+      1.0
+    ],
+    "base_color": [
+      0.98,
+      0.78,
+      0.22,
+      1.0
+    ],
+    "metallic": 0.99,
+    "roughness": 0.16,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "Royal_24k_Gold_Deep": {
+    "diffuse": [
+      0.76,
+      0.52,
+      0.11,
+      1.0
+    ],
+    "base_color": [
+      0.76,
+      0.52,
+      0.11,
+      1.0
+    ],
+    "metallic": 0.99,
+    "roughness": 0.28,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "Saloko_24k_Deep_Gold": {
+    "diffuse": [
+      0.78,
+      0.54,
+      0.1,
+      1.0
+    ],
+    "base_color": [
+      0.78,
+      0.54,
+      0.1,
+      1.0
+    ],
+    "metallic": 0.98,
+    "roughness": 0.26,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "Saloko_24k_Polished_YellowGold": {
+    "diffuse": [
+      0.99,
+      0.82,
+      0.2,
+      1.0
+    ],
+    "base_color": [
+      0.99,
+      0.82,
+      0.2,
+      1.0
+    ],
+    "metallic": 0.99,
+    "roughness": 0.14,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "Saloko_24k_YellowGold_Filigree.001": {
+    "diffuse": [
+      0.98,
+      0.8,
+      0.18,
+      1.0
+    ],
+    "base_color": [
+      0.8,
+      0.8,
+      0.8,
+      1.0
+    ],
+    "metallic": 0.99,
+    "roughness": 0.5,
+    "base_map": "Saloko_Gold_BaseColor",
+    "metallic_map": null,
+    "roughness_map": "Saloko_Gold_Roughness",
+    "normal_map": "Saloko_Gold_Normal",
+    "normal_strength": 1.45,
+    "metallic_smoothness_map": "Saloko_24k_YellowGold_Filigree_001_MetallicSmoothness"
+  },
+  "Saloko_Chignon_GoldenMeshNet": {
+    "diffuse": [
+      0.15,
+      0.12,
+      0.08,
+      1.0
+    ],
+    "base_color": [
+      0.8,
+      0.8,
+      0.8,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.5,
+    "base_map": "Saloko_BunMesh_BaseColor",
+    "metallic_map": "Saloko_BunMesh_Metallic",
+    "roughness_map": "Saloko_BunMesh_Roughness",
+    "normal_map": "Saloko_BunMesh_Normal",
+    "normal_strength": 1.4,
+    "metallic_smoothness_map": "Saloko_Chignon_GoldenMeshNet_MetallicSmoothness"
+  },
+  "Saloko_White_Pearl_Tip": {
+    "diffuse": [
+      0.97,
+      0.95,
+      0.9,
+      1.0
+    ],
+    "base_color": [
+      0.97,
+      0.95,
+      0.9,
+      1.0
+    ],
+    "metallic": 0.08,
+    "roughness": 0.12,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "Suntiang_24k_Gold_Filigree": {
+    "diffuse": [
+      0.98,
+      0.78,
+      0.2,
+      1.0
+    ],
+    "base_color": [
+      0.8,
+      0.8,
+      0.8,
+      1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.5,
+    "base_map": "Suntiang_Gold_BaseColor",
+    "metallic_map": "Suntiang_Gold_Metallic",
+    "roughness_map": "Suntiang_Gold_Roughness",
+    "normal_map": "Suntiang_Gold_Normal",
+    "normal_strength": 1.45,
+    "metallic_smoothness_map": "Suntiang_24k_Gold_Filigree_MetallicSmoothness"
+  },
+  "Suntiang_24k_Polished_Gold": {
+    "diffuse": [
+      0.99,
+      0.81,
+      0.23,
+      1.0
+    ],
+    "base_color": [
+      0.99,
+      0.81,
+      0.23,
+      1.0
+    ],
+    "metallic": 0.99,
+    "roughness": 0.15,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "Suntiang_Antique_Gold_Recess": {
+    "diffuse": [
+      0.76,
+      0.5,
+      0.11,
+      1.0
+    ],
+    "base_color": [
+      0.76,
+      0.5,
+      0.11,
+      1.0
+    ],
+    "metallic": 0.99,
+    "roughness": 0.28,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  },
+  "Suntiang_Ruby_Gem": {
+    "diffuse": [
+      0.78,
+      0.03,
+      0.1,
+      1.0
+    ],
+    "base_color": [
+      0.72,
+      0.02,
+      0.09,
+      1.0
+    ],
+    "metallic": 0.25,
+    "roughness": 0.08,
+    "base_map": null,
+    "metallic_map": null,
+    "roughness_map": null,
+    "normal_map": null,
+    "normal_strength": 1.0,
+    "metallic_smoothness_map": null
+  }
+}
