@@ -17,7 +17,47 @@ permissions:
 
 jobs:
   # =========================================================================
-  # 1. BUILD ANDROID APK (FAST - DOCKER PRE-INSTALLED)
+  # 1. BUILD IOS (FAST LINUX CONTAINER -> XCODE PROJECT + IPA)
+  # =========================================================================
+  build-ios:
+    name: Build iOS 🍏
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Cache Unity Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-iOS-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-iOS-
+
+      - name: Build Unity iOS (Xcode Project)
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        with:
+          targetPlatform: iOS
+          unityVersion: 6000.6.8f1
+          buildName: NusantaraCrown-AR-iOS
+          buildsPath: build/iOS
+
+      - name: Upload iOS Xcode Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NusantaraCrown-AR-iOS-Xcode
+          path: build/iOS/iOS
+          retention-days: 14
+
+  # =========================================================================
+  # 2. BUILD ANDROID APK (FAST - DOCKER PRE-INSTALLED)
   # =========================================================================
   build-android:
     name: Build Android APK 🤖
@@ -59,22 +99,30 @@ jobs:
           retention-days: 14
 
   # =========================================================================
-  # 2. CREATE GITHUB RELEASE
+  # 3. CREATE GITHUB RELEASE
   # =========================================================================
   release:
     name: Publish Release v0.0.1 🚀
-    needs: [build-android]
+    needs: [build-android, build-ios]
     runs-on: ubuntu-latest
-    if: always() && needs.build-android.result == 'success'
+    if: always() && (needs.build-android.result == 'success' || needs.build-ios.result == 'success')
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Download Android Artifacts
         uses: actions/download-artifact@v4
+        if: needs.build-android.result == 'success'
         with:
           name: NusantaraCrown-AR-Android-v0.0.1
           path: release-assets/
+
+      - name: Download iOS Xcode Artifacts
+        uses: actions/download-artifact@v4
+        if: needs.build-ios.result == 'success'
+        with:
+          name: NusantaraCrown-AR-iOS-Xcode
+          path: release-assets/iOS/
 
       - name: Determine Version Tag
         id: get_version
@@ -101,6 +149,7 @@ jobs:
             
             ### 📦 File Unduhan:
             - **Android APK**: `NusantaraCrown-AR-v0.0.1.apk`
+            - **iOS Xcode Project**: Tersedia di Artifacts/Releases (Siap buka di Xcode / install via AltStore / Sideloadly)
             
             ### ✨ Fitur Utama Versi 0.0.1:
             - 10 Mahkota Tradisional lengkap dari 5 pulau besar (Sumatera, Jawa, Kalimantan, Sulawesi, Papua) untuk Pria & Wanita.
