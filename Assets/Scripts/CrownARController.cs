@@ -44,16 +44,21 @@ public class CrownARController : MonoBehaviour
     [Header("AR Foundation & AI Model Reference")]
     [SerializeField] private ARFaceManager faceManager;
     [SerializeField] public ModelAsset faceDetectorModel;
-    [SerializeField] private Vector3 arFaceHatOffset = new Vector3(0f, 0.065f, -0.02f);
-    [SerializeField] private Vector3 arFaceCrownScale = new Vector3(0.15f, 0.15f, 0.15f);
+    [SerializeField] private Vector3 arFaceHatOffset = new Vector3(0f, 0.14f, -0.05f);
+    [SerializeField] private Vector3 arFaceCrownScale = new Vector3(0.18f, 0.18f, 0.18f);
 
-    [Header("Webcam Head-Top Hat Calibration")]
-    [Tooltip("Vertical offset multiplier above the eyes so the crown sits on the forehead/top of the head like a hat")]
-    [SerializeField] private float foreheadHeightFactor = 0.34f;
+    [Header("Webcam Head-Top Hat & Occlusion Calibration")]
+    [Tooltip("Vertical offset multiplier above the eyes so the crown sits ON TOP of the head (cranial crown)")]
+    [SerializeField] private float foreheadHeightFactor = 0.50f;
     [Tooltip("Scale multiplier for the crown relative to detected head width")]
-    [SerializeField] private float hatScaleMultiplier = 1.0f;
-    [Tooltip("Local offset of the crown mesh relative to the head anchor")]
-    [SerializeField] private Vector3 localHatOffset = new Vector3(0f, 0.0f, 0f);
+    [SerializeField] private float hatScaleMultiplier = 1.15f;
+    [Tooltip("Local offset of the crown mesh relative to the head anchor (Z pushes backwards to encircle skull)")]
+    [SerializeField] private Vector3 localHatOffset = new Vector3(0f, 0.05f, -0.14f);
+    [Tooltip("Enable invisible 3D head occluder so the crown encircles the head instead of hovering in front")]
+    [SerializeField] private bool enableHeadOcclusion = true;
+    [SerializeField] private Vector3 occluderLocalOffset = new Vector3(0f, -0.08f, -0.08f);
+    [SerializeField] private Vector3 occluderScaleMultiplier = new Vector3(0.92f, 1.25f, 1.10f);
+    [SerializeField] private Material occluderMaterial;
 
     [Header("3D Live Camera Background & Orientation")]
     [SerializeField] public MeshRenderer webcamBackgroundRenderer;
@@ -107,6 +112,7 @@ public class CrownARController : MonoBehaviour
     private GameObject activeCrownInstance;
     private Transform activeFaceTransform;
     private GameObject headAnchorGO;
+    private GameObject headOccluderGO;
     private Texture2D lastCapturedTexture;
 
     // Webcam & 3D Background Quad state
@@ -444,9 +450,9 @@ public class CrownARController : MonoBehaviour
         if (!isTrackingNow)
         {
             // When no face is locked yet, keep the crown resting above the face guide reticle so it is always visible
-            targetHeadLocalPos = new Vector3(0f, 0.34f, HEAD_DEPTH_Z);
+            targetHeadLocalPos = new Vector3(0f, 0.40f, HEAD_DEPTH_Z);
             targetHeadLocalRot = Quaternion.Euler(0f, 180f, 0f);
-            targetCrownScale = new Vector3(0.30f, 0.30f, 0.30f);
+            targetCrownScale = new Vector3(0.32f, 0.32f, 0.32f);
         }
 
         if (headAnchorGO != null)
@@ -457,7 +463,7 @@ public class CrownARController : MonoBehaviour
             if (activeCrownInstance == null)
                 AttachCrownToFace(activeFaceTransform);
 
-            float smoothSpeed = 14f * Time.deltaTime;
+            float smoothSpeed = 18f * Time.deltaTime;
             headAnchorGO.transform.localPosition = Vector3.Lerp(headAnchorGO.transform.localPosition, targetHeadLocalPos, smoothSpeed);
             headAnchorGO.transform.localRotation = Quaternion.Slerp(headAnchorGO.transform.localRotation, targetHeadLocalRot, smoothSpeed);
 
@@ -467,6 +473,13 @@ public class CrownARController : MonoBehaviour
                 activeCrownInstance.transform.localScale = Vector3.Lerp(activeCrownInstance.transform.localScale, normalizedTargetScale, smoothSpeed);
                 if (!activeCrownInstance.activeSelf)
                     activeCrownInstance.SetActive(true);
+            }
+
+            if (headOccluderGO != null)
+            {
+                Vector3 targetOccluderScale = Vector3.Scale(targetCrownScale, occluderScaleMultiplier);
+                headOccluderGO.transform.localScale = Vector3.Lerp(headOccluderGO.transform.localScale, targetOccluderScale, smoothSpeed);
+                headOccluderGO.transform.localPosition = occluderLocalOffset;
             }
         }
 
@@ -729,27 +742,27 @@ public class CrownARController : MonoBehaviour
             float rollRad = rollDeg * Mathf.Deg2Rad;
             Vector2 headUpWorld = new Vector2(-Mathf.Sin(rollRad), Mathf.Cos(rollRad));
 
-            // Place Hat Anchor on the forehead/brow line above the eyes so the crown sits ON TOP of the head like a hat
+            // Place Hat Anchor on the top of the skull so the crown sits ON TOP of the head like a crown
             Vector2 foreheadPos2D = posEyeMid + headUpWorld * (faceWorldH * foreheadHeightFactor);
-            float clampedX = Mathf.Clamp(foreheadPos2D.x, -0.42f, 0.42f);
-            float clampedY = Mathf.Clamp(foreheadPos2D.y, -0.05f, 0.54f);
+            float clampedX = Mathf.Clamp(foreheadPos2D.x, -0.45f, 0.45f);
+            float clampedY = Mathf.Clamp(foreheadPos2D.y, -0.05f, 0.58f);
             targetHeadLocalPos = new Vector3(clampedX, clampedY, HEAD_DEPTH_Z);
 
-            // Compute 3D Head Yaw (turning left/right) and Pitch (nodding up/down)
+            // Compute 3D Head Yaw (turning left/right) and Pitch (nodding up/down) with responsive tracking
             float eyeWorldDist = Mathf.Max(0.03f, Vector2.Distance(leftScreenEye, rightScreenEye));
             float noseOffsetNorm = (posNose.x - posEyeMid.x) / eyeWorldDist;
-            float yawDeg = Mathf.Clamp(-noseOffsetNorm * 55f, -45f, 45f);
+            float yawDeg = Mathf.Clamp(-noseOffsetNorm * 80f, -55f, 55f);
 
             float eyeToNoseY = posEyeMid.y - posNose.y;
             float noseToMouthY = Mathf.Max(0.01f, posNose.y - posMouthMid.y);
             float pitchRatio = (eyeToNoseY / noseToMouthY) - 1.15f;
-            float pitchDeg = Mathf.Clamp(pitchRatio * 22f, -25f, 25f);
+            float pitchDeg = Mathf.Clamp(pitchRatio * 32f, -30f, 30f);
 
             targetHeadLocalRot = Quaternion.Euler(pitchDeg, 180f + yawDeg, -rollDeg);
 
-            // Compute dynamic 3D scale (normalized to 2.0m reference mesh width) so the crown fits the head like a hat
-            float desiredCrownWorldWidth = Mathf.Max(faceWorldW * 1.25f, eyeWorldDist * 2.8f) * hatScaleMultiplier;
-            float uniformScale = Mathf.Clamp(desiredCrownWorldWidth * 0.5f, 0.22f, 0.42f);
+            // Compute dynamic 3D scale so the crown encircles the head with realistic volume
+            float desiredCrownWorldWidth = Mathf.Max(faceWorldW * 1.30f, eyeWorldDist * 3.0f) * hatScaleMultiplier;
+            float uniformScale = Mathf.Clamp(desiredCrownWorldWidth * 0.5f, 0.24f, 0.46f);
             targetCrownScale = new Vector3(uniformScale, uniformScale, uniformScale);
 
             if (frameCounter % 30 == 0)
@@ -994,9 +1007,11 @@ public class CrownARController : MonoBehaviour
         if (activeCrownInstance != null)
             Destroy(activeCrownInstance);
 
-        // Ensure no lingering clones under the anchor
+        // Ensure no lingering clones under the anchor except the Head Occluder
         foreach (Transform child in faceTransform)
         {
+            if (child.gameObject.name == "Head_Occluder")
+                continue;
             child.gameObject.SetActive(false);
             Destroy(child.gameObject);
         }
@@ -1034,6 +1049,60 @@ public class CrownARController : MonoBehaviour
         }
 
         activeCrownInstance.SetActive(true);
+
+        // Ensure invisible 3D Head Occluder is active so the crown naturally encircles the head
+        EnsureHeadOccluderExists(faceTransform);
+    }
+
+    private void EnsureHeadOccluderExists(Transform faceTransform)
+    {
+        if (!enableHeadOcclusion || faceTransform == null) return;
+
+        if (headOccluderGO == null)
+        {
+            Transform existing = faceTransform.Find("Head_Occluder");
+            if (existing != null)
+            {
+                headOccluderGO = existing.gameObject;
+            }
+            else
+            {
+                headOccluderGO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                headOccluderGO.name = "Head_Occluder";
+                Collider col = headOccluderGO.GetComponent<Collider>();
+                if (col != null) Destroy(col);
+            }
+        }
+
+        headOccluderGO.transform.SetParent(faceTransform, false);
+        headOccluderGO.transform.localPosition = occluderLocalOffset;
+        headOccluderGO.transform.localRotation = Quaternion.identity;
+
+        Vector3 targetOccluderScale = Vector3.Scale(targetCrownScale, occluderScaleMultiplier);
+        headOccluderGO.transform.localScale = targetOccluderScale;
+
+        if (occluderMaterial == null)
+        {
+            Shader occluderShader = Shader.Find("NusantaraAR/HeadOccluder");
+            if (occluderShader != null)
+            {
+                occluderMaterial = new Material(occluderShader);
+            }
+            else
+            {
+                Debug.LogWarning("[NusantaraAR] Shader NusantaraAR/HeadOccluder tidak ditemukan!");
+            }
+        }
+
+        MeshRenderer mr = headOccluderGO.GetComponent<MeshRenderer>();
+        if (mr != null && occluderMaterial != null)
+        {
+            mr.sharedMaterial = occluderMaterial;
+            mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            mr.receiveShadows = false;
+        }
+
+        headOccluderGO.SetActive(true);
     }
 
     private void UpdateGenderUIState()

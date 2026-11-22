@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Release version tag (e.g. v0.0.1)'
+        description: 'Release version tag (e.g. v0.0.2)'
         required: true
-        default: 'v0.0.1'
+        default: 'v0.0.2'
 
 permissions:
   contents: write
@@ -91,9 +91,9 @@ jobs:
           APP_PATH=$(find xcode-project/NusantaraCrown-AR-iOS/build_output -name "*.app" -type d | head -n 1)
           echo "Found app at: $APP_PATH"
           cp -R "$APP_PATH" Payload/
-          zip -r NusantaraCrown-AR-v0.0.1.ipa Payload
+          zip -r NusantaraCrown-AR-v0.0.2.ipa Payload
           mkdir -p ipa-output
-          mv NusantaraCrown-AR-v0.0.1.ipa ipa-output/
+          mv NusantaraCrown-AR-v0.0.2.ipa ipa-output/
 
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
@@ -132,7 +132,7 @@ jobs:
         with:
           targetPlatform: Android
           unityVersion: 6000.6.8f1
-          buildName: NusantaraCrown-AR-v0.0.1
+          buildName: NusantaraCrown-AR-v0.0.2
           buildsPath: build/Android
           androidExportType: 'androidPackage'
           androidKeystoreName: ''
@@ -140,7 +140,7 @@ jobs:
       - name: Upload Android Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: NusantaraCrown-AR-Android-v0.0.1
+          name: NusantaraCrown-AR-Android-v0.0.2
           path: build/Android/**/*.apk
           retention-days: 14
 
@@ -148,7 +148,7 @@ jobs:
   # 3. CREATE GITHUB RELEASE
   # =========================================================================
   release:
-    name: Publish Release v0.0.1 🚀
+    name: Publish Release v0.0.2 🚀
     needs: [build-android, compile-ipa]
     runs-on: ubuntu-latest
     if: always() && (needs.build-android.result == 'success' || needs.compile-ipa.result == 'success')
@@ -160,7 +160,7 @@ jobs:
         uses: actions/download-artifact@v4
         if: needs.build-android.result == 'success'
         with:
-          name: NusantaraCrown-AR-Android-v0.0.1
+          name: NusantaraCrown-AR-Android-v0.0.2
           path: release-assets/
 
       - name: Download iOS IPA Artifacts
@@ -178,28 +178,35 @@ jobs:
           elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
             echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
           else
-            echo "TAG=v0.0.1" >> $GITHUB_OUTPUT
+            echo "TAG=v0.0.2" >> $GITHUB_OUTPUT
           fi
 
-      - name: Create GitHub Release v0.0.1
+      - name: Create GitHub Release v0.0.2
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.get_version.outputs.TAG }}
-          name: "NusantaraCrown AR ${{ steps.get_version.outputs.TAG }}"
+          name: "NusantaraCrown AR ${{ steps.get_version.outputs.TAG }} 👑🇮🇩"
           body: |
-            Aplikasi augmented reality untuk mencoba 10 mahkota adat tradisional Indonesia langsung di kepala lewat kamera.
+            ### NusantaraCrown AR ${{ steps.get_version.outputs.TAG }}
 
-            ### Unduhan:
-            - Android APK: `NusantaraCrown-AR-${{ steps.get_version.outputs.TAG }}.apk`
-            - iOS IPA: `NusantaraCrown-AR-${{ steps.get_version.outputs.TAG }}.ipa`
+            Pembaruan versi 2 (v0.0.2) membawa peningkatan visual dan tracking AR:
+            - **Realistis Mengelilingi Kepala (Head Occlusion)**: Mahkota kini membalut keliling kepala secara alami dengan depth-mask occluder 3D, bukan lagi sekadar menempel di depan kening.
+            - **Seating Depth & Alignment Presisi**: Posisi mahkota disesuaikan pada puncak lingkar tengkorak (cranial crown) sehingga tampak pas dari sudut depan maupun samping.
+            - **Pelacakan Arah Kepala Responsif**: Gerakan rotasi (menoleh/yaw dan mengangguk/pitch) mengikuti gerakan kepala secara halus dan akurat.
+            - **Orientasi Kamera Tegak**: Tampilan kamera tegak natural di semua perangkat Android dan iOS.
 
-            ### Fitur:
-            - 10 mahkota tradisional pria dan wanita dari Sumatera, Jawa, Kalimantan, Sulawesi, dan Papua.
-            - Tracking wajah real-time dengan AR Foundation dan fallback neural face detection.
-            - Kartu filosofi budaya: makna simbolik, bahan tradisional, dan momen penggunaan tiap mahkota.
-            - Fitur tangkapan layar kamera langsung dari aplikasi.
+            ### Unduhan File Aplikasi:
+            - **Android APK**: `NusantaraCrown-AR-${{ steps.get_version.outputs.TAG }}.apk`
+            - **iOS IPA**: `NusantaraCrown-AR-${{ steps.get_version.outputs.TAG }}.ipa`
+
+            ### 10 Mahkota Tradisional Nusantara:
+            1. **Sumatera**: Suntiang Gadang (Wanita) & Deta Saluak Batimba (Pria) — Minangkabau
+            2. **Jawa**: Mahkota Pengantin Paes Ageng (Wanita) & Kuluk Kanigaran (Pria) — Kasultanan Ngayogyakarta
+            3. **Kalimantan**: Lavung Manik Dayak Kenyah (Wanita) & Lavung Sekop Hornbill (Pria)
+            4. **Sulawesi**: Saloko Toraja Sa'dan Emas (Wanita) & Passapu Patonro Makassar (Pria)
+            5. **Papua**: Kasuari Cowrie Shell Plume (Wanita) & Bird of Paradise Cenderawasih (Pria)
           draft: false
           prerelease: false
           files: |

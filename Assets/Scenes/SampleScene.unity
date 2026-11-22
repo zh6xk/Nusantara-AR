@@ -6792,11 +6792,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CrownARController
   faceManager: {fileID: 1864876463}
   faceDetectorModel: {fileID: 5022602860645237092, guid: 61cf425d48095da4085a254f4f9fefa7, type: 3}
-  arFaceHatOffset: {x: 0, y: 0.055, z: -0.02}
-  arFaceCrownScale: {x: 0.14, y: 0.14, z: 0.14}
-  foreheadHeightFactor: 0.24
-  hatScaleMultiplier: 1.08
-  localHatOffset: {x: 0, y: 0.01, z: 0}
+  arFaceHatOffset: {x: 0, y: 0.14, z: -0.05}
+  arFaceCrownScale: {x: 0.18, y: 0.18, z: 0.18}
+  foreheadHeightFactor: 0.5
+  hatScaleMultiplier: 1.15
+  localHatOffset: {x: 0, y: 0.05, z: -0.14}
+  enableHeadOcclusion: 1
+  occluderLocalOffset: {x: 0, y: -0.08, z: -0.08}
+  occluderScaleMultiplier: {x: 0.92, y: 1.25, z: 1.1}
+  occluderMaterial: {fileID: 2100000, guid: 0fa2d40be364421f88d402c7d42a1363, type: 2}
   webcamBackgroundRenderer: {fileID: 371653788}
   crownList:
   - island: 0
