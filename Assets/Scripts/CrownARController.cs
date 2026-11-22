@@ -55,8 +55,12 @@ public class CrownARController : MonoBehaviour
     [Tooltip("Local offset of the crown mesh relative to the head anchor")]
     [SerializeField] private Vector3 localHatOffset = new Vector3(0f, 0.0f, 0f);
 
-    [Header("3D Live Camera Background")]
+    [Header("3D Live Camera Background & Orientation")]
     [SerializeField] public MeshRenderer webcamBackgroundRenderer;
+    [Tooltip("Manual override to invert camera vertically if needed on non-standard hardware")]
+    [SerializeField] public bool invertCameraVertical = false;
+    [Tooltip("Manual override to invert camera horizontally if needed on non-standard hardware")]
+    [SerializeField] public bool invertCameraHorizontal = false;
 
     [Header("Crown Database")]
     [SerializeField] public List<CrownData> crownList = new List<CrownData>();
@@ -142,6 +146,13 @@ public class CrownARController : MonoBehaviour
 
     private void Awake()
     {
+        // Enforce upright Portrait mode across all platforms (prevents camera flip upside down)
+        Screen.orientation = ScreenOrientation.Portrait;
+        Screen.autorotateToPortrait = true;
+        Screen.autorotateToPortraitUpsideDown = false;
+        Screen.autorotateToLandscapeLeft = false;
+        Screen.autorotateToLandscapeRight = false;
+
         if (faceManager == null)
             faceManager = FindAnyObjectByType<ARFaceManager>();
 
@@ -508,10 +519,50 @@ public class CrownARController : MonoBehaviour
 
             if (runtimeWebcamMat != null)
             {
-                float sx = isFrontFacingOrMirrored ? -1f : 1f;
-                float ox = isFrontFacingOrMirrored ? 1f : 0f;
-                float sy = webCamTexture.videoVerticallyMirrored ? -1f : 1f;
-                float oy = webCamTexture.videoVerticallyMirrored ? 1f : 0f;
+                float sx, ox, sy, oy;
+
+                if (!isRotated90)
+                {
+                    // Desktop PC / Landscape (rotAngle == 0 or 180):
+                    // U is Horizontal (Screen X), V is Vertical (Screen Y)
+                    sx = isFrontFacingOrMirrored ? -1f : 1f;
+                    ox = isFrontFacingOrMirrored ? 1f : 0f;
+
+                    sy = webCamTexture.videoVerticallyMirrored ? -1f : 1f;
+                    oy = webCamTexture.videoVerticallyMirrored ? 1f : 0f;
+                }
+                else
+                {
+                    // Mobile Portrait (rotAngle == 90 [iOS] or 270 [Android]):
+                    // Due to 90/270 deg Z-rotation:
+                    // U runs along Screen Vertical (Height)!
+                    // V runs along Screen Horizontal (Width)!
+                    
+                    // VERTICAL AXIS ON SCREEN (Top/Bottom):
+                    // On both iOS (90 deg) and Android (270 deg), sx = +1f keeps the top of the head at the TOP of the screen.
+                    // (Fixes the bug where sx was set to -1f, which inverted the vertical axis and made the camera upside down!)
+                    sx = 1f;
+                    ox = 0f;
+
+                    // HORIZONTAL AXIS ON SCREEN (Left/Right):
+                    // V controls screen horizontal.
+                    // For selfie/front camera, mirror horizontally:
+                    sy = isFrontFacingOrMirrored ? -1f : 1f;
+                    oy = isFrontFacingOrMirrored ? 1f : 0f;
+                }
+
+                // Support manual calibration if hardware has non-standard driver behavior
+                if (invertCameraVertical)
+                {
+                    if (!isRotated90) { sy = -sy; oy = 1f - oy; }
+                    else              { sx = -sx; ox = 1f - ox; }
+                }
+                if (invertCameraHorizontal)
+                {
+                    if (!isRotated90) { sx = -sx; ox = 1f - ox; }
+                    else              { sy = -sy; oy = 1f - oy; }
+                }
+
                 runtimeWebcamMat.mainTextureScale = new Vector2(sx, sy);
                 runtimeWebcamMat.mainTextureOffset = new Vector2(ox, oy);
                 if (runtimeWebcamMat.HasProperty("_BaseMap_ST"))
@@ -824,6 +875,18 @@ public class CrownARController : MonoBehaviour
         {
             isFrontFacingOrMirrored = !isFrontFacingOrMirrored;
         }
+    }
+
+    public void ToggleInvertCameraVertical()
+    {
+        invertCameraVertical = !invertCameraVertical;
+        Debug.Log($"[NusantaraCrown] Invert Camera Vertical toggled: {invertCameraVertical}");
+    }
+
+    public void ToggleInvertCameraHorizontal()
+    {
+        invertCameraHorizontal = !invertCameraHorizontal;
+        Debug.Log($"[NusantaraCrown] Invert Camera Horizontal toggled: {invertCameraHorizontal}");
     }
 
     public void CaptureScreen()

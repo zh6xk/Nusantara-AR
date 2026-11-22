@@ -715,7 +715,7 @@ public static class FigmaUISetup
         RectTransform btnGearRT = CreateImage("Btn_Gear", hudTop, sprBtnGear, Image.Type.Simple, true,
             new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), SV(16f, -44f), SV(44f, 44f));
         Button btnGear = btnGearRT.gameObject.AddComponent<Button>();
-        UnityEventTools.AddPersistentListener(btnGear.onClick, controller.ToggleFlipOrRotation);
+        UnityEventTools.AddPersistentListener(btnGear.onClick, controller.ToggleInvertCameraVertical);
 
         RectTransform headerPillRT = CreateImage("Pill_HeaderTitle", hudTop, sprPillDark, Image.Type.Simple, false,
             new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), SV(0f, -49f), SV(245f, 34f));

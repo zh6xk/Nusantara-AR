@@ -4202,7 +4202,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1527265084}
         m_TargetAssemblyTypeName: CrownARController, Assembly-CSharp
-        m_MethodName: ToggleFlipOrRotation
+        m_MethodName: ToggleInvertCameraVertical
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
