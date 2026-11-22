@@ -28,6 +28,19 @@ jobs:
         with:
           lfs: true
 
+      - name: Free Disk Space & Add Swap
+        run: |
+          # Remove unnecessary large packages to free RAM pressure
+          sudo apt-get remove -y '^dotnet-.*' '^llvm-.*' 'php.*' google-cloud-sdk azure-cli 2>/dev/null || true
+          sudo apt-get autoremove -y 2>/dev/null || true
+          sudo rm -rf /opt/hostedtoolcache/CodeQL /opt/hostedtoolcache/Ruby /usr/local/lib/android 2>/dev/null || true
+          # Add 10 GB swap file to prevent OOM kill (exit code 137) during Unity iOS build
+          sudo fallocate -l 10G /mnt/swapfile
+          sudo chmod 600 /mnt/swapfile
+          sudo mkswap /mnt/swapfile
+          sudo swapon /mnt/swapfile
+          free -h
+
       - name: Cache Unity Library
         uses: actions/cache@v4
         with:
