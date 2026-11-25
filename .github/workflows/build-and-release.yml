@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Release version tag (e.g. v0.0.2)'
+        description: 'Release version tag (e.g. v0.0.3)'
         required: true
-        default: 'v0.0.2'
+        default: 'v0.0.3'
 
 permissions:
   contents: write
@@ -21,7 +21,7 @@ jobs:
   # =========================================================================
   build-ios:
     name: Build iOS Xcode 🍏
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -30,11 +30,7 @@ jobs:
 
       - name: Free Disk Space & Add Swap
         run: |
-          # Remove unnecessary large packages to free RAM pressure
-          sudo apt-get remove -y '^dotnet-.*' '^llvm-.*' 'php.*' google-cloud-sdk azure-cli 2>/dev/null || true
-          sudo apt-get autoremove -y 2>/dev/null || true
           sudo rm -rf /opt/hostedtoolcache/CodeQL /opt/hostedtoolcache/Ruby /usr/local/lib/android 2>/dev/null || true
-          # Add 10 GB swap file to prevent OOM kill (exit code 137) during Unity iOS build
           sudo fallocate -l 10G /mnt/swapfile
           sudo chmod 600 /mnt/swapfile
           sudo mkswap /mnt/swapfile
@@ -45,9 +41,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: Library
-          key: Library-iOS-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          key: Library-v3-iOS-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
           restore-keys: |
-            Library-iOS-
+            Library-v3-iOS-
 
       - name: Build Unity iOS (Xcode Project)
         uses: game-ci/unity-builder@v4
@@ -104,9 +100,9 @@ jobs:
           APP_PATH=$(find xcode-project/NusantaraCrown-AR-iOS/build_output -name "*.app" -type d | head -n 1)
           echo "Found app at: $APP_PATH"
           cp -R "$APP_PATH" Payload/
-          zip -r NusantaraCrown-AR-v0.0.2.ipa Payload
+          zip -r NusantaraCrown-AR-v0.0.3.ipa Payload
           mkdir -p ipa-output
-          mv NusantaraCrown-AR-v0.0.2.ipa ipa-output/
+          mv NusantaraCrown-AR-v0.0.3.ipa ipa-output/
 
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
@@ -120,7 +116,7 @@ jobs:
   # =========================================================================
   build-android:
     name: Build Android APK 🤖
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -129,8 +125,6 @@ jobs:
 
       - name: Free Disk Space & Add Swap
         run: |
-          sudo apt-get remove -y '^dotnet-.*' '^llvm-.*' 'php.*' google-cloud-sdk azure-cli 2>/dev/null || true
-          sudo apt-get autoremove -y 2>/dev/null || true
           sudo rm -rf /opt/hostedtoolcache/CodeQL /opt/hostedtoolcache/Ruby /usr/local/lib/android 2>/dev/null || true
           sudo fallocate -l 10G /mnt/swapfile
           sudo chmod 600 /mnt/swapfile
@@ -142,9 +136,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: Library
-          key: Library-Android-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          key: Library-v3-Android-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
           restore-keys: |
-            Library-Android-
+            Library-v3-Android-
 
       - name: Build Unity Android APK
         uses: game-ci/unity-builder@v4
@@ -156,7 +150,7 @@ jobs:
         with:
           targetPlatform: Android
           unityVersion: 6000.6.8f1
-          buildName: NusantaraCrown-AR-v0.0.2
+          buildName: NusantaraCrown-AR-v0.0.3
           buildsPath: build/Android
           androidExportType: 'androidPackage'
           androidKeystoreName: ''
@@ -164,7 +158,7 @@ jobs:
       - name: Upload Android Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: NusantaraCrown-AR-Android-v0.0.2
+          name: NusantaraCrown-AR-Android-v0.0.3
           path: build/Android/**/*.apk
           retention-days: 14
 
@@ -172,9 +166,9 @@ jobs:
   # 3. CREATE GITHUB RELEASE
   # =========================================================================
   release:
-    name: Publish Release v0.0.2 🚀
+    name: Publish Release v0.0.3 🚀
     needs: [build-android, compile-ipa]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: always() && (needs.build-android.result == 'success' || needs.compile-ipa.result == 'success')
     steps:
       - name: Checkout Repository
@@ -184,7 +178,7 @@ jobs:
         uses: actions/download-artifact@v4
         if: needs.build-android.result == 'success'
         with:
-          name: NusantaraCrown-AR-Android-v0.0.2
+          name: NusantaraCrown-AR-Android-v0.0.3
           path: release-assets/
 
       - name: Download iOS IPA Artifacts
@@ -202,10 +196,10 @@ jobs:
           elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
             echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
           else
-            echo "TAG=v0.0.2" >> $GITHUB_OUTPUT
+            echo "TAG=v0.0.3" >> $GITHUB_OUTPUT
           fi
 
-      - name: Create GitHub Release v0.0.2
+      - name: Create GitHub Release v0.0.3
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -215,8 +209,8 @@ jobs:
           body: |
             ### NusantaraCrown AR ${{ steps.get_version.outputs.TAG }}
 
-            Pembaruan versi 2 (v0.0.2) membawa peningkatan visual dan tracking AR:
-            - **Realistis Mengelilingi Kepala (Head Occlusion)**: Mahkota kini membalut keliling kepala secara alami dengan depth-mask occluder 3D, bukan lagi sekadar menempel di depan kening.
+            Pembaruan versi 3 (v0.0.3) membawa stabilisasi build Android & iOS serta seluruh perbaikan AR kepala:
+            - **Realistis Mengelilingi Kepala (Head Occlusion)**: Mahkota membalut keliling kepala secara alami dengan depth-mask occluder 3D, bukan sekadar menempel di depan kening.
             - **Seating Depth & Alignment Presisi**: Posisi mahkota disesuaikan pada puncak lingkar tengkorak (cranial crown) sehingga tampak pas dari sudut depan maupun samping.
             - **Pelacakan Arah Kepala Responsif**: Gerakan rotasi (menoleh/yaw dan mengangguk/pitch) mengikuti gerakan kepala secara halus dan akurat.
             - **Orientasi Kamera Tegak**: Tampilan kamera tegak natural di semua perangkat Android dan iOS.

@@ -21,6 +21,7 @@ public static class UnityMCPBridge
 
     static UnityMCPBridge()
     {
+        if (Application.isBatchMode) return;
         StartServer();
         AssemblyReloadEvents.beforeAssemblyReload += StopServer;
         EditorApplication.quitting += StopServer;
@@ -28,7 +29,7 @@ public static class UnityMCPBridge
 
     public static void StartServer()
     {
-        if (isRunning) return;
+        if (Application.isBatchMode || isRunning) return;
         try
         {
             listener = new HttpListener();
