@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
@@ -55,7 +56,7 @@ public class CrownARController : MonoBehaviour
     [Tooltip("Local offset of the crown mesh relative to the head anchor (Z pushes backwards to encircle skull)")]
     [SerializeField] private Vector3 localHatOffset = new Vector3(0f, 0.05f, -0.14f);
     [Tooltip("Enable invisible 3D head occluder so the crown encircles the head instead of hovering in front")]
-    [SerializeField] private bool enableHeadOcclusion = true;
+    [SerializeField] private bool enableHeadOcclusion = false;
     [SerializeField] private Vector3 occluderLocalOffset = new Vector3(0f, -0.08f, -0.08f);
     [SerializeField] private Vector3 occluderScaleMultiplier = new Vector3(0.92f, 1.25f, 1.10f);
     [SerializeField] private Material occluderMaterial;
@@ -114,6 +115,14 @@ public class CrownARController : MonoBehaviour
     private GameObject headAnchorGO;
     private GameObject headOccluderGO;
     private Texture2D lastCapturedTexture;
+    private bool isFlashlightOn = false;
+
+    // Cached HUD containers for clean screenshot & preview UX
+    private GameObject hudTopGO;
+    private GameObject pillTrackingGO;
+    private GameObject controlsBottomGO;
+    private GameObject btnClosePreviewGO;
+    private GameObject pillPreviewTitleGO;
 
     // Webcam & 3D Background Quad state
     private WebCamTexture webCamTexture;
@@ -143,6 +152,21 @@ public class CrownARController : MonoBehaviour
     private float currentCrownNormalizationFactor = 1.0f;
     private float lastFaceDetectedTime = -10f;
     private int frameCounter = 0;
+
+    // Anti-jitter EMA & deadzone state for YuNet pose
+    private bool hasSmoothedPose = false;
+    private Vector3 smoothedHeadPos;
+    private float smoothedYaw = 0f;
+    private float smoothedPitch = 0f;
+    private float smoothedRoll = 0f;
+    private float smoothedScale = 0.32f;
+
+#if UNITY_IOS && !UNITY_EDITOR
+    [DllImport("__Internal")] private static extern void Nusantara_SetTorch(bool enabled);
+    [DllImport("__Internal")] private static extern void Nusantara_SaveImageToGallery(string filePath);
+    [DllImport("__Internal")] private static extern void Nusantara_ShareImage(string filePath);
+    [DllImport("__Internal")] private static extern void Nusantara_OpenPhotosApp();
+#endif
 
     private static readonly Color ColorDarkText = new Color32(18, 18, 18, 255);
     private static readonly Color ColorWhiteText = Color.white;
@@ -194,6 +218,17 @@ public class CrownARController : MonoBehaviour
 
     private IEnumerator Start()
     {
+        hudTopGO = GameObject.Find("HUD_Top");
+        pillTrackingGO = GameObject.Find("Pill_Status_Tracking");
+        controlsBottomGO = GameObject.Find("Controls_Bottom");
+        if (capturePreviewPanel != null)
+        {
+            Transform closeT = capturePreviewPanel.transform.Find("Btn_ClosePreview");
+            if (closeT != null) btnClosePreviewGO = closeT.gameObject;
+            Transform pillT = capturePreviewPanel.transform.Find("Pill_PreviewTitle");
+            if (pillT != null) pillPreviewTitleGO = pillT.gameObject;
+        }
+
         UpdateGenderUIState();
         UpdateIslandCardsUI();
 
@@ -338,16 +373,33 @@ public class CrownARController : MonoBehaviour
             return;
         }
 
-        int selectedIdx = 0;
+        int selectedIdx = FindPreferredCameraIndex(preferFrontFacing);
+        StartWebCamByIndex(selectedIdx);
+    }
+
+    private int FindPreferredCameraIndex(bool frontFacing)
+    {
+        if (webCamDevices == null || webCamDevices.Length == 0) return 0;
+
+        int fallbackIdx = -1;
         for (int i = 0; i < webCamDevices.Length; i++)
         {
-            if (webCamDevices[i].isFrontFacing == preferFrontFacing)
-            {
-                selectedIdx = i;
-                break;
-            }
+            WebCamDevice d = webCamDevices[i];
+            if (d.isFrontFacing != frontFacing) continue;
+
+            if (fallbackIdx < 0) fallbackIdx = i;
+
+            string lowerName = (d.name ?? "").ToLowerInvariant();
+            bool looksSecondary = lowerName.Contains("tele") || lowerName.Contains("ultra") ||
+                                  lowerName.Contains("macro") || lowerName.Contains("depth") ||
+                                  lowerName.Contains("tof") || lowerName.Contains("dual");
+
+            if (d.kind == WebCamKind.WideAngle && !looksSecondary)
+                return i;
         }
-        StartWebCamByIndex(selectedIdx);
+
+        if (fallbackIdx >= 0) return fallbackIdx;
+        return 0;
     }
 
     private void StartWebCamByIndex(int index)
@@ -360,6 +412,7 @@ public class CrownARController : MonoBehaviour
             Destroy(webCamTexture);
         }
 
+        hasSmoothedPose = false;
         currentCamIndex = ((index % webCamDevices.Length) + webCamDevices.Length) % webCamDevices.Length;
         WebCamDevice device = webCamDevices[currentCamIndex];
 
@@ -369,7 +422,35 @@ public class CrownARController : MonoBehaviour
         isFrontFacingOrMirrored = device.isFrontFacing || webCamDevices.Length == 1;
 #endif
 
-        webCamTexture = new WebCamTexture(device.name, 1280, 720, 30);
+        if (device.isFrontFacing && isFlashlightOn)
+        {
+            isFlashlightOn = false;
+            ApplyHardwareTorch(false);
+        }
+
+        // Pick a native 4:3 (~1.33) 1x full-FOV resolution so back cameras don't crop/zoom into 16:9 video mode
+        int reqW = 1280;
+        int reqH = 960;
+        if (device.availableResolutions != null && device.availableResolutions.Length > 0)
+        {
+            float bestScore = float.MaxValue;
+            foreach (Resolution res in device.availableResolutions)
+            {
+                if (res.width < 640 || res.height < 480) continue;
+                float aspect = (float)Mathf.Max(res.width, res.height) / Mathf.Max(1f, Mathf.Min(res.width, res.height));
+                float aspectDiff = Mathf.Abs(aspect - 1.3333f);
+                float sizeDiff = Mathf.Abs(Mathf.Max(res.width, res.height) - 1280f) / 1280f;
+                float score = aspectDiff * 10f + sizeDiff;
+                if (score < bestScore)
+                {
+                    bestScore = score;
+                    reqW = res.width;
+                    reqH = res.height;
+                }
+            }
+        }
+
+        webCamTexture = new WebCamTexture(device.name, reqW, reqH, 30);
         webCamTexture.Play();
 
         if (webcamBackgroundRenderer != null)
@@ -463,7 +544,7 @@ public class CrownARController : MonoBehaviour
             if (activeCrownInstance == null)
                 AttachCrownToFace(activeFaceTransform);
 
-            float smoothSpeed = 18f * Time.deltaTime;
+            float smoothSpeed = 10f * Time.deltaTime;
             headAnchorGO.transform.localPosition = Vector3.Lerp(headAnchorGO.transform.localPosition, targetHeadLocalPos, smoothSpeed);
             headAnchorGO.transform.localRotation = Quaternion.Slerp(headAnchorGO.transform.localRotation, targetHeadLocalRot, smoothSpeed);
 
@@ -477,9 +558,17 @@ public class CrownARController : MonoBehaviour
 
             if (headOccluderGO != null)
             {
-                Vector3 targetOccluderScale = Vector3.Scale(targetCrownScale, occluderScaleMultiplier);
-                headOccluderGO.transform.localScale = Vector3.Lerp(headOccluderGO.transform.localScale, targetOccluderScale, smoothSpeed);
-                headOccluderGO.transform.localPosition = occluderLocalOffset;
+                if (!enableHeadOcclusion)
+                {
+                    Destroy(headOccluderGO);
+                    headOccluderGO = null;
+                }
+                else
+                {
+                    Vector3 targetOccluderScale = Vector3.Scale(targetCrownScale, occluderScaleMultiplier);
+                    headOccluderGO.transform.localScale = Vector3.Lerp(headOccluderGO.transform.localScale, targetOccluderScale, smoothSpeed);
+                    headOccluderGO.transform.localPosition = occluderLocalOffset;
+                }
             }
         }
 
@@ -558,10 +647,13 @@ public class CrownARController : MonoBehaviour
                     ox = 0f;
 
                     // HORIZONTAL AXIS ON SCREEN (Left/Right):
-                    // V controls screen horizontal.
-                    // For selfie/front camera, mirror horizontally:
-                    sy = isFrontFacingOrMirrored ? -1f : 1f;
-                    oy = isFrontFacingOrMirrored ? 1f : 0f;
+                    // Because 90 deg and 270 deg point +V in opposite horizontal directions,
+                    // 270 deg (typical Android front) already points +V left, whereas 90 deg points +V right.
+                    // Ensure selfie/front camera behaves as a natural mirror (move left -> left on screen)
+                    // and back camera is un-mirrored.
+                    bool mirrorH = (rotAngle == 270) ? !isFrontFacingOrMirrored : isFrontFacingOrMirrored;
+                    sy = mirrorH ? -1f : 1f;
+                    oy = mirrorH ? 1f : 0f;
                 }
 
                 // Support manual calibration if hardware has non-standard driver behavior
@@ -746,28 +838,58 @@ public class CrownARController : MonoBehaviour
             Vector2 foreheadPos2D = posEyeMid + headUpWorld * (faceWorldH * foreheadHeightFactor);
             float clampedX = Mathf.Clamp(foreheadPos2D.x, -0.45f, 0.45f);
             float clampedY = Mathf.Clamp(foreheadPos2D.y, -0.05f, 0.58f);
-            targetHeadLocalPos = new Vector3(clampedX, clampedY, HEAD_DEPTH_Z);
+            Vector3 rawHeadPos = new Vector3(clampedX, clampedY, HEAD_DEPTH_Z);
 
             // Compute 3D Head Yaw (turning left/right) and Pitch (nodding up/down) with responsive tracking
             float eyeWorldDist = Mathf.Max(0.03f, Vector2.Distance(leftScreenEye, rightScreenEye));
             float noseOffsetNorm = (posNose.x - posEyeMid.x) / eyeWorldDist;
-            float yawDeg = Mathf.Clamp(-noseOffsetNorm * 80f, -55f, 55f);
+            float rawYaw = Mathf.Clamp(-noseOffsetNorm * 80f, -55f, 55f);
 
             float eyeToNoseY = posEyeMid.y - posNose.y;
             float noseToMouthY = Mathf.Max(0.01f, posNose.y - posMouthMid.y);
             float pitchRatio = (eyeToNoseY / noseToMouthY) - 1.15f;
-            float pitchDeg = Mathf.Clamp(pitchRatio * 32f, -30f, 30f);
-
-            targetHeadLocalRot = Quaternion.Euler(pitchDeg, 180f + yawDeg, -rollDeg);
+            float rawPitch = Mathf.Clamp(pitchRatio * 32f, -30f, 30f);
 
             // Compute dynamic 3D scale so the crown encircles the head with realistic volume
             float desiredCrownWorldWidth = Mathf.Max(faceWorldW * 1.30f, eyeWorldDist * 3.0f) * hatScaleMultiplier;
-            float uniformScale = Mathf.Clamp(desiredCrownWorldWidth * 0.5f, 0.24f, 0.46f);
-            targetCrownScale = new Vector3(uniformScale, uniformScale, uniformScale);
+            float rawScale = Mathf.Clamp(desiredCrownWorldWidth * 0.5f, 0.24f, 0.46f);
+
+            // Apply deadzone + adaptive EMA low-pass filtering to eliminate YuNet frame-to-frame jitter
+            if (!hasSmoothedPose)
+            {
+                smoothedHeadPos = rawHeadPos;
+                smoothedYaw = rawYaw;
+                smoothedPitch = rawPitch;
+                smoothedRoll = rollDeg;
+                smoothedScale = rawScale;
+                hasSmoothedPose = true;
+            }
+            else
+            {
+                float posDelta = Vector3.Distance(smoothedHeadPos, rawHeadPos);
+                if (posDelta > 0.005f)
+                {
+                    float posAlpha = posDelta > 0.06f ? 0.55f : 0.26f;
+                    smoothedHeadPos = Vector3.Lerp(smoothedHeadPos, rawHeadPos, posAlpha);
+                }
+
+                if (Mathf.Abs(rawYaw - smoothedYaw) > 1.5f)
+                    smoothedYaw = Mathf.LerpAngle(smoothedYaw, rawYaw, 0.28f);
+                if (Mathf.Abs(rawPitch - smoothedPitch) > 1.5f)
+                    smoothedPitch = Mathf.LerpAngle(smoothedPitch, rawPitch, 0.25f);
+                if (Mathf.Abs(rollDeg - smoothedRoll) > 1.2f)
+                    smoothedRoll = Mathf.LerpAngle(smoothedRoll, rollDeg, 0.25f);
+                if (Mathf.Abs(rawScale - smoothedScale) > 0.006f)
+                    smoothedScale = Mathf.Lerp(smoothedScale, rawScale, 0.20f);
+            }
+
+            targetHeadLocalPos = smoothedHeadPos;
+            targetHeadLocalRot = Quaternion.Euler(smoothedPitch, 180f + smoothedYaw, -smoothedRoll);
+            targetCrownScale = new Vector3(smoothedScale, smoothedScale, smoothedScale);
 
             if (frameCounter % 30 == 0)
             {
-                Debug.Log($"[HatTrack] score={bestScore:F2} box=({bestBoxX:F0},{bestBoxY:F0},{bestBoxW:F0},{bestBoxH:F0}) re=({bestReX:F0},{bestReY:F0}) le=({bestLeX:F0},{bestLeY:F0}) eyeMid={posEyeMid} faceWH=({faceWorldW:F2},{faceWorldH:F2}) forehead={foreheadPos2D} scale={uniformScale:F2} vMir={webCamTexture.videoVerticallyMirrored} rot={webCamTexture.videoRotationAngle}");
+                Debug.Log($"[HatTrack] score={bestScore:F2} box=({bestBoxX:F0},{bestBoxY:F0},{bestBoxW:F0},{bestBoxH:F0}) re=({bestReX:F0},{bestReY:F0}) le=({bestLeX:F0},{bestLeY:F0}) eyeMid={posEyeMid} faceWH=({faceWorldW:F2},{faceWorldH:F2}) forehead={foreheadPos2D} scale={smoothedScale:F2} vMir={webCamTexture.videoVerticallyMirrored} rot={webCamTexture.videoRotationAngle}");
             }
         }
         catch (Exception e)
@@ -882,12 +1004,118 @@ public class CrownARController : MonoBehaviour
     {
         if (isUsingWebCamMode && webCamDevices != null && webCamDevices.Length > 1)
         {
-            StartWebCamByIndex(currentCamIndex + 1);
+            bool currentlyFront = webCamDevices[currentCamIndex].isFrontFacing;
+            int targetIdx = FindPreferredCameraIndex(!currentlyFront);
+            if (targetIdx == currentCamIndex)
+                targetIdx = (currentCamIndex + 1) % webCamDevices.Length;
+            StartWebCamByIndex(targetIdx);
         }
         else if (isUsingWebCamMode)
         {
             isFrontFacingOrMirrored = !isFrontFacingOrMirrored;
         }
+    }
+
+    public void ToggleFlashlight()
+    {
+        isFlashlightOn = !isFlashlightOn;
+        ApplyHardwareTorch(isFlashlightOn);
+        Debug.Log($"[NusantaraCrown] Flashlight toggled: {isFlashlightOn}");
+    }
+
+    private void ApplyHardwareTorch(bool enabled)
+    {
+#if UNITY_ANDROID && !UNITY_EDITOR
+        try
+        {
+            using (AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+            using (AndroidJavaObject activity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
+            using (AndroidJavaObject camManager = activity.Call<AndroidJavaObject>("getSystemService", "camera"))
+            {
+                string[] camIds = camManager.Call<string[]>("getCameraIdList");
+                if (camIds != null)
+                {
+                    using (AndroidJavaClass camCharsClass = new AndroidJavaClass("android.hardware.camera2.CameraCharacteristics"))
+                    {
+                        AndroidJavaObject keyFlash = camCharsClass.GetStatic<AndroidJavaObject>("FLASH_INFO_AVAILABLE");
+                        AndroidJavaObject keyFacing = camCharsClass.GetStatic<AndroidJavaObject>("LENS_FACING");
+                        int facingBack = camCharsClass.GetStatic<int>("LENS_FACING_BACK");
+                        string fallbackId = null;
+                        string backId = null;
+
+                        foreach (string id in camIds)
+                        {
+                            using (AndroidJavaObject chars = camManager.Call<AndroidJavaObject>("getCameraCharacteristics", id))
+                            using (AndroidJavaObject hasFlashObj = chars.Call<AndroidJavaObject>("get", keyFlash))
+                            {
+                                bool hasFlash = hasFlashObj != null && hasFlashObj.Call<bool>("booleanValue");
+                                if (!hasFlash) continue;
+                                if (fallbackId == null) fallbackId = id;
+                                using (AndroidJavaObject facingObj = chars.Call<AndroidJavaObject>("get", keyFacing))
+                                {
+                                    if (facingObj != null && facingObj.Call<int>("intValue") == facingBack)
+                                    {
+                                        backId = id;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        string targetCamId = backId ?? fallbackId;
+                        if (targetCamId != null)
+                            camManager.Call("setTorchMode", targetCamId, enabled);
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[NusantaraCrown] Android Torch warning: {e.Message}");
+        }
+#elif UNITY_IOS && !UNITY_EDITOR
+        try
+        {
+            Nusantara_SetTorch(enabled);
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[NusantaraCrown] iOS Torch warning: {e.Message}");
+        }
+#endif
+    }
+
+    public void OpenGallery()
+    {
+#if UNITY_ANDROID && !UNITY_EDITOR
+        try
+        {
+            using (AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+            using (AndroidJavaObject activity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
+            using (AndroidJavaClass mediaClass = new AndroidJavaClass("android.provider.MediaStore$Images$Media"))
+            using (AndroidJavaObject externalUri = mediaClass.GetStatic<AndroidJavaObject>("EXTERNAL_CONTENT_URI"))
+            using (AndroidJavaObject intent = new AndroidJavaObject("android.content.Intent", "android.intent.action.VIEW", externalUri))
+            {
+                intent.Call<AndroidJavaObject>("setType", "image/*");
+                activity.Call("startActivity", intent);
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[NusantaraCrown] Gagal membuka Galeri Android: {e.Message}");
+        }
+#elif UNITY_IOS && !UNITY_EDITOR
+        try
+        {
+            Nusantara_OpenPhotosApp();
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[NusantaraCrown] Gagal membuka Photos iOS: {e.Message}");
+        }
+#else
+        Application.OpenURL("file://" + Application.persistentDataPath);
+#endif
     }
 
     public void ToggleInvertCameraVertical()
@@ -911,6 +1139,17 @@ public class CrownARController : MonoBehaviour
     {
         if (capturePreviewPanel != null)
             capturePreviewPanel.SetActive(false);
+
+        SetMainHudVisible(true);
+    }
+
+    private void SetMainHudVisible(bool visible)
+    {
+        if (hudTopGO != null) hudTopGO.SetActive(visible);
+        if (pillTrackingGO != null) pillTrackingGO.SetActive(visible);
+        if (controlsBottomGO != null) controlsBottomGO.SetActive(visible);
+        if (!visible && faceGuideReticle != null) faceGuideReticle.SetActive(false);
+        if (!visible && infoModalPanel != null) infoModalPanel.SetActive(false);
     }
 
     public void SaveCapturedPhoto()
@@ -918,37 +1157,162 @@ public class CrownARController : MonoBehaviour
         string filename = $"NusantaraAR_{DateTime.Now:yyyyMMdd_HHmmss}.png";
         if (lastCapturedTexture != null)
         {
-            string fullPath = System.IO.Path.Combine(Application.persistentDataPath, filename);
-            System.IO.File.WriteAllBytes(fullPath, lastCapturedTexture.EncodeToPNG());
-            Debug.Log($"[NusantaraAR] Foto tersimpan di: {fullPath}");
+            byte[] pngBytes = lastCapturedTexture.EncodeToPNG();
+            string localPath = System.IO.Path.Combine(Application.persistentDataPath, filename);
+            System.IO.File.WriteAllBytes(localPath, pngBytes);
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+            SaveImageToAndroidGallery(pngBytes, filename);
+#elif UNITY_IOS && !UNITY_EDITOR
+            Nusantara_SaveImageToGallery(localPath);
+#endif
+            Debug.Log($"[NusantaraAR] Foto tersimpan ke Galeri: {filename}");
         }
         else
         {
             ScreenCapture.CaptureScreenshot(filename);
-            Debug.Log($"[NusantaraAR] Screenshot: {filename}");
         }
         CloseCapturePreview();
     }
 
+    public void ShareCapturedPhoto()
+    {
+        if (lastCapturedTexture == null) return;
+
+        string filename = $"NusantaraAR_Share_{DateTime.Now:yyyyMMdd_HHmmss}.png";
+        byte[] pngBytes = lastCapturedTexture.EncodeToPNG();
+        string tempPath = System.IO.Path.Combine(Application.temporaryCachePath, filename);
+        System.IO.File.WriteAllBytes(tempPath, pngBytes);
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+        try
+        {
+            string uriStr = SaveImageToAndroidGallery(pngBytes, filename);
+            if (!string.IsNullOrEmpty(uriStr))
+            {
+                using (AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+                using (AndroidJavaObject activity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
+                using (AndroidJavaClass uriClass = new AndroidJavaClass("android.net.Uri"))
+                using (AndroidJavaObject contentUri = uriClass.CallStatic<AndroidJavaObject>("parse", uriStr))
+                using (AndroidJavaObject sendIntent = new AndroidJavaObject("android.content.Intent", "android.intent.action.SEND"))
+                {
+                    sendIntent.Call<AndroidJavaObject>("setType", "image/png");
+                    sendIntent.Call<AndroidJavaObject>("putExtra", "android.intent.extra.STREAM", contentUri);
+                    sendIntent.Call<AndroidJavaObject>("addFlags", 1); // FLAG_GRANT_READ_URI_PERMISSION
+                    using (AndroidJavaObject chooser = new AndroidJavaClass("android.content.Intent")
+                        .CallStatic<AndroidJavaObject>("createChooser", sendIntent, "Bagikan Foto"))
+                    {
+                        activity.Call("startActivity", chooser);
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[NusantaraAR] Android Share warning: {e.Message}");
+        }
+#elif UNITY_IOS && !UNITY_EDITOR
+        try
+        {
+            Nusantara_ShareImage(tempPath);
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[NusantaraAR] iOS Share warning: {e.Message}");
+        }
+#else
+        Debug.Log($"[NusantaraAR] Share preview file: {tempPath}");
+#endif
+    }
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+    private string SaveImageToAndroidGallery(byte[] pngBytes, string filename)
+    {
+        try
+        {
+            using (AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+            using (AndroidJavaObject activity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
+            using (AndroidJavaObject resolver = activity.Call<AndroidJavaObject>("getContentResolver"))
+            using (AndroidJavaClass versionClass = new AndroidJavaClass("android.os.Build$VERSION"))
+            {
+                int sdkInt = versionClass.GetStatic<int>("SDK_INT");
+                if (sdkInt >= 29)
+                {
+                    using (AndroidJavaObject values = new AndroidJavaObject("android.content.ContentValues"))
+                    using (AndroidJavaClass mediaClass = new AndroidJavaClass("android.provider.MediaStore$Images$Media"))
+                    using (AndroidJavaObject externalUri = mediaClass.GetStatic<AndroidJavaObject>("EXTERNAL_CONTENT_URI"))
+                    {
+                        values.Call("put", "_display_name", filename);
+                        values.Call("put", "mime_type", "image/png");
+                        values.Call("put", "relative_path", "Pictures/NusantaraCrown");
+                        using (AndroidJavaObject itemUri = resolver.Call<AndroidJavaObject>("insert", externalUri, values))
+                        {
+                            if (itemUri != null)
+                            {
+                                using (AndroidJavaObject outStream = resolver.Call<AndroidJavaObject>("openOutputStream", itemUri))
+                                {
+                                    outStream.Call("write", pngBytes);
+                                    outStream.Call("flush");
+                                }
+                                return itemUri.Call<string>("toString");
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    using (AndroidJavaClass envClass = new AndroidJavaClass("android.os.Environment"))
+                    using (AndroidJavaObject picDir = envClass.CallStatic<AndroidJavaObject>("getExternalStoragePublicDirectory", "Pictures"))
+                    {
+                        string dirPath = System.IO.Path.Combine(picDir.Call<string>("getAbsolutePath"), "NusantaraCrown");
+                        System.IO.Directory.CreateDirectory(dirPath);
+                        string filePath = System.IO.Path.Combine(dirPath, filename);
+                        System.IO.File.WriteAllBytes(filePath, pngBytes);
+                        using (AndroidJavaClass scanner = new AndroidJavaClass("android.media.MediaScannerConnection"))
+                        {
+                            scanner.CallStatic("scanFile", activity, new string[] { filePath }, new string[] { "image/png" }, null);
+                        }
+                        using (AndroidJavaClass uriClass = new AndroidJavaClass("android.net.Uri"))
+                        using (AndroidJavaObject fileObj = new AndroidJavaObject("java.io.File", filePath))
+                        using (AndroidJavaObject fileUri = uriClass.CallStatic<AndroidJavaObject>("fromFile", fileObj))
+                        {
+                            return fileUri.Call<string>("toString");
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[NusantaraAR] Gagal simpan ke Galeri Android: {e.Message}");
+        }
+        return null;
+    }
+#endif
+
     private IEnumerator CaptureAndShowPreviewRoutine()
     {
+        // Hide HUD UI before capturing so the photo is clean and without buttons
+        SetMainHudVisible(false);
         yield return new WaitForEndOfFrame();
 
         if (lastCapturedTexture != null)
             Destroy(lastCapturedTexture);
 
-        lastCapturedTexture = ScreenCapture.CaptureScreenshotAsTexture();
+        // Use ReadPixels with RGB24 sRGB texture so colors never wash out to white in Linear color space
+        lastCapturedTexture = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
+        lastCapturedTexture.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
+        lastCapturedTexture.Apply();
+
         if (imgCapturedPreview != null && lastCapturedTexture != null)
         {
             imgCapturedPreview.texture = lastCapturedTexture;
             imgCapturedPreview.color = Color.white;
         }
 
-        CrownData data = GetActiveCrownData();
-        if (txtPreviewPill != null && data != null)
-        {
-            txtPreviewPill.text = $"Foto · {data.crownName}";
-        }
+        // Only show Retake, Simpan ke Galeri, Share (hide close/title pill)
+        if (btnClosePreviewGO != null) btnClosePreviewGO.SetActive(false);
+        if (pillPreviewTitleGO != null) pillPreviewTitleGO.SetActive(false);
 
         if (capturePreviewPanel != null)
             capturePreviewPanel.SetActive(true);
@@ -1056,7 +1420,21 @@ public class CrownARController : MonoBehaviour
 
     private void EnsureHeadOccluderExists(Transform faceTransform)
     {
-        if (!enableHeadOcclusion || faceTransform == null) return;
+        if (!enableHeadOcclusion)
+        {
+            if (headOccluderGO != null)
+            {
+                Destroy(headOccluderGO);
+                headOccluderGO = null;
+            }
+            if (faceTransform != null)
+            {
+                Transform existing = faceTransform.Find("Head_Occluder");
+                if (existing != null) Destroy(existing.gameObject);
+            }
+            return;
+        }
+        if (faceTransform == null) return;
 
         if (headOccluderGO == null)
         {

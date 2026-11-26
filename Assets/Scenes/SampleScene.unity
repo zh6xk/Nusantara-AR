@@ -827,7 +827,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1527265084}
         m_TargetAssemblyTypeName: CrownARController, Assembly-CSharp
-        m_MethodName: SaveCapturedPhoto
+        m_MethodName: ShareCapturedPhoto
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1038,7 +1038,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1527265084}
         m_TargetAssemblyTypeName: CrownARController, Assembly-CSharp
-        m_MethodName: ToggleInfoModal
+        m_MethodName: OpenGallery
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4202,7 +4202,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1527265084}
         m_TargetAssemblyTypeName: CrownARController, Assembly-CSharp
-        m_MethodName: ToggleInvertCameraVertical
+        m_MethodName: ToggleFlashlight
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6797,7 +6797,7 @@ MonoBehaviour:
   foreheadHeightFactor: 0.5
   hatScaleMultiplier: 1.15
   localHatOffset: {x: 0, y: 0.05, z: -0.14}
-  enableHeadOcclusion: 1
+  enableHeadOcclusion: 0
   occluderLocalOffset: {x: 0, y: -0.08, z: -0.08}
   occluderScaleMultiplier: {x: 0.92, y: 1.25, z: 1.1}
   occluderMaterial: {fileID: 2100000, guid: 0fa2d40be364421f88d402c7d42a1363, type: 2}

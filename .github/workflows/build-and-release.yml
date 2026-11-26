@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Release version tag (e.g. v0.0.3)'
+        description: 'Release version tag (e.g. v0.0.4)'
         required: true
-        default: 'v0.0.3'
+        default: 'v0.0.4'
 
 permissions:
   contents: write
@@ -100,9 +100,9 @@ jobs:
           APP_PATH=$(find xcode-project/NusantaraCrown-AR-iOS/build_output -name "*.app" -type d | head -n 1)
           echo "Found app at: $APP_PATH"
           cp -R "$APP_PATH" Payload/
-          zip -r NusantaraCrown-AR-v0.0.3.ipa Payload
+          zip -r NusantaraCrown-AR-v0.0.4.ipa Payload
           mkdir -p ipa-output
-          mv NusantaraCrown-AR-v0.0.3.ipa ipa-output/
+          mv NusantaraCrown-AR-v0.0.4.ipa ipa-output/
 
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
@@ -150,7 +150,7 @@ jobs:
         with:
           targetPlatform: Android
           unityVersion: 6000.6.8f1
-          buildName: NusantaraCrown-AR-v0.0.3
+          buildName: NusantaraCrown-AR-v0.0.4
           buildsPath: build/Android
           androidExportType: 'androidPackage'
           androidKeystoreName: ''
@@ -158,7 +158,7 @@ jobs:
       - name: Upload Android Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: NusantaraCrown-AR-Android-v0.0.3
+          name: NusantaraCrown-AR-Android-v0.0.4
           path: build/Android/**/*.apk
           retention-days: 14
 
@@ -166,7 +166,7 @@ jobs:
   # 3. CREATE GITHUB RELEASE
   # =========================================================================
   release:
-    name: Publish Release v0.0.3 🚀
+    name: Publish Release v0.0.4 🚀
     needs: [build-android, compile-ipa]
     runs-on: ubuntu-24.04
     if: always() && (needs.build-android.result == 'success' || needs.compile-ipa.result == 'success')
@@ -178,7 +178,7 @@ jobs:
         uses: actions/download-artifact@v4
         if: needs.build-android.result == 'success'
         with:
-          name: NusantaraCrown-AR-Android-v0.0.3
+          name: NusantaraCrown-AR-Android-v0.0.4
           path: release-assets/
 
       - name: Download iOS IPA Artifacts
@@ -196,10 +196,10 @@ jobs:
           elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
             echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
           else
-            echo "TAG=v0.0.3" >> $GITHUB_OUTPUT
+            echo "TAG=v0.0.4" >> $GITHUB_OUTPUT
           fi
 
-      - name: Create GitHub Release v0.0.3
+      - name: Create GitHub Release v0.0.4
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -209,11 +209,12 @@ jobs:
           body: |
             ### NusantaraCrown AR ${{ steps.get_version.outputs.TAG }}
 
-            Pembaruan versi 3 (v0.0.3) membawa stabilisasi build Android & iOS serta seluruh perbaikan AR kepala:
-            - **Realistis Mengelilingi Kepala (Head Occlusion)**: Mahkota membalut keliling kepala secara alami dengan depth-mask occluder 3D, bukan sekadar menempel di depan kening.
-            - **Seating Depth & Alignment Presisi**: Posisi mahkota disesuaikan pada puncak lingkar tengkorak (cranial crown) sehingga tampak pas dari sudut depan maupun samping.
-            - **Pelacakan Arah Kepala Responsif**: Gerakan rotasi (menoleh/yaw dan mengangguk/pitch) mengikuti gerakan kepala secara halus dan akurat.
-            - **Orientasi Kamera Tegak**: Tampilan kamera tegak natural di semua perangkat Android dan iOS.
+            Pembaruan versi 4 (v0.0.4):
+            - **Anti-Jitter 3D Mahkota**: Pelacakan kepala lebih stabil dan halus tanpa bergetar-getar.
+            - **Hapus Shape Oval di Bawah Mahkota**: Menghilangkan artefak oval occluder di bawah mahkota.
+            - **Kamera Depan Mirror Natural & Kamera Belakang 1x**: Arah kamera depan sesuai cermin (kiri ke kiri), dan perpindahan ke kamera belakang otomatis memilih lensa utama 1x (tidak zoom/telephoto).
+            - **Tombol Senter & Galeri Asli**: Tombol kiri atas mengaktifkan senter perangkat; tombol galeri kanan bawah langsung membuka aplikasi Galeri/Photos.
+            - **UX Jepret, Retake, Simpan ke Galeri & Share Gambar**: Hasil jepretan tidak memutih, menyembunyikan HUD utama, menyisakan Retake / Simpan ke Galeri / Share gambar asli.
 
             ### Unduhan File Aplikasi:
             - **Android APK**: `NusantaraCrown-AR-${{ steps.get_version.outputs.TAG }}.apk`

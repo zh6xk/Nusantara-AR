@@ -715,7 +715,7 @@ public static class FigmaUISetup
         RectTransform btnGearRT = CreateImage("Btn_Gear", hudTop, sprBtnGear, Image.Type.Simple, true,
             new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), SV(16f, -44f), SV(44f, 44f));
         Button btnGear = btnGearRT.gameObject.AddComponent<Button>();
-        UnityEventTools.AddPersistentListener(btnGear.onClick, controller.ToggleInvertCameraVertical);
+        UnityEventTools.AddPersistentListener(btnGear.onClick, controller.ToggleFlashlight);
 
         RectTransform headerPillRT = CreateImage("Pill_HeaderTitle", hudTop, sprPillDark, Image.Type.Simple, false,
             new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), SV(0f, -49f), SV(245f, 34f));
@@ -858,7 +858,7 @@ public static class FigmaUISetup
         RectTransform btnGalleryRT = CreateImage("Btn_Gallery", actionBarRT, sprBtnGallery, Image.Type.Simple, true,
             new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), SV(-36f, 0f), SV(48f, 48f));
         Button btnGallery = btnGalleryRT.gameObject.AddComponent<Button>();
-        UnityEventTools.AddPersistentListener(btnGallery.onClick, controller.ToggleInfoModal);
+        UnityEventTools.AddPersistentListener(btnGallery.onClick, controller.OpenGallery);
 
         // =========================================================================
         // 4. MODAL EDUKASI BUDAYA (HALF-SHEET) — Figma node 5:169
@@ -976,7 +976,7 @@ public static class FigmaUISetup
         RectTransform btnShareRT = CreateImage("Btn_Share", shareGroup, sprBtnShare, Image.Type.Simple, true,
             new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), Vector2.zero, SV(52f, 52f));
         Button btnShare = btnShareRT.gameObject.AddComponent<Button>();
-        UnityEventTools.AddPersistentListener(btnShare.onClick, controller.SaveCapturedPhoto);
+        UnityEventTools.AddPersistentListener(btnShare.onClick, controller.ShareCapturedPhoto);
         CreateTMP("Lbl_Share", shareGroup, "Share", S(12f), FontStyles.Bold, Color.white, TextAlignmentOptions.Center,
             new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0.5f, 0.5f), Vector2.zero, SV(0f, 18f));
 
