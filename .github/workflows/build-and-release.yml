@@ -41,9 +41,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: Library
-          key: Library-v3-iOS-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          key: Library-v4-iOS-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
           restore-keys: |
-            Library-v3-iOS-
+            Library-v4-iOS-
 
       - name: Build Unity iOS (Xcode Project)
         uses: game-ci/unity-builder@v4
@@ -55,6 +55,7 @@ jobs:
         with:
           targetPlatform: iOS
           unityVersion: 6000.6.8f1
+          versioning: None
           buildName: NusantaraCrown-AR-iOS
           buildsPath: build/iOS
 
@@ -150,6 +151,7 @@ jobs:
         with:
           targetPlatform: Android
           unityVersion: 6000.6.8f1
+          versioning: None
           buildName: NusantaraCrown-AR-v0.0.4
           buildsPath: build/Android
           androidExportType: 'androidPackage'
